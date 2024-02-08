@@ -1,0 +1,42 @@
+* {
+    box-sizing: border-box;
+}
+
+.v-btn > * {
+    transition: all 0.1s ease-in-out !important;
+}
+
+.v-theme--light {
+    --v-hover-opacity: 0.1;
+}
+
+.v-snackbar__wrapper {
+    min-width: max-content !important;
+}
+
+.octo-ui .v-field--variant-solo,
+.octo-ui .v-field--variant-solo-filled {
+    box-shadow: none !important;
+}
+.octo-ui .v-input__details {
+    position: absolute;
+}
+
+.octo-ui .deletebtn .v-icon--size-default {
+    font-size: 1.25em;
+}
+
+/* .octo-ui *::-webkit-scrollbar {
+    width: 0px;
+} */
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    /* outline: 2px solid red; */
+}

@@ -12,6 +12,22 @@
     "@nuxt/devtools": "^1.0.3",
     "nuxt": "^3.8.2",
     "vue": "^3.3.8",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "@formkit/auto-animate": "^0.8.1",
+    "@invictus.codes/nuxt-vuetify": "^0.3.0",
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.0"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@pinia/nuxt": "^0.5.1",
+    "@supabase/supabase-js": "^2.39.2",
+    "@vueuse/nuxt": "^10.7.1",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-vue-next": "^0.303.0",
+    "nanoid": "^5.0.4",
+    "pinia": "^2.1.7",
+    "qrcode.vue": "^3.4.1",
+    "vuedraggable": "^4.1.0"
   }
 }
