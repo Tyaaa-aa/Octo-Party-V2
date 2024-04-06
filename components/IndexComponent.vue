@@ -490,7 +490,7 @@ const dragOptions = computed(() => ({
       </v-expand-transition>
 
       <div class="btns-box">
-        <v-btn icon="mdi-heart" variant="elevated" color="deep-purple-darken-1" @click="handleFavsMenu('toggle')">
+        <v-btn icon="mdi-menu" variant="elevated" color="deep-purple-darken-1" @click="handleFavsMenu('toggle')">
         </v-btn>
       </div>
     </div>
