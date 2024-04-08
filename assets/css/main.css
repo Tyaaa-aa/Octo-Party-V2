@@ -35,6 +35,17 @@
 	flex-direction: row-reverse;
 	justify-content: space-between;
 }
+
+.notifications .v-list-item__content {
+	display: flex !important;
+	justify-content: space-between !important;
+	align-items: center;
+	position: relative;
+}
+
+.notifications .v-btn {
+	height: calc(var(--v-btn-height) + -6px) !important;
+	border-radius: 8px !important;
 }
 
 /* .octo-ui *::-webkit-scrollbar {

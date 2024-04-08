@@ -21,8 +21,10 @@
 
 	const octoStore = useOctoStore(); // Using the store
 
-	const listExpand = ref<boolean>(false);
+	const listExpand = ref<boolean>(true);
 	const showNotifications = ref<boolean>(true);
+	const notificationCount = ref<number>(0);
+	const notiExpand = ref<boolean>(true);
 	type ActionType = NonNullable<"toggle">;
 	const handleFavsMenu = (action: ActionType) => {
 		if (action === "toggle") {
@@ -35,6 +37,8 @@
 	let idleTimer: NodeJS.Timeout | null = null;
 	let isBtnsBoxHovered = false;
 	const IDLE_DURATION = 3000;
+  // const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
+  const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
 	const handleMouseMove = () => {
 		if (isIdle.value && !isBtnsBoxHovered) {
 			isIdle.value = false;
@@ -386,7 +390,7 @@
 
 		const updateTimer = setInterval(() => {
 			checkStreamerStatus();
-		}, 300000); // 5 minutes in milliseconds
+		}, UPDATE_LIST_TIMER); // 5 minutes in milliseconds
 	});
 
 	onUnmounted(() => {
@@ -412,6 +416,36 @@
 		disabled: false,
 		ghostClass: "ghost",
 	}));
+
+  // If the user has disabled notifications, close the notifications panel
+  watch(showNotifications, (value) => {
+    if (!value) {
+      notiExpand.value = false;
+    }
+  });
+
+  interface Notification {
+    streamer_name: string;
+    view_count: string;
+  }
+  const activeNotifications = ref<Notification[]>([]);
+  watch(activeStreamers, (value) => {
+    // check for new streamers and add them to the activeNotifications
+    const newStreamers = value.filter(
+      (streamer) =>
+        !activeNotifications.value.some(
+          (notification) => notification.streamer_name === streamer.user_name
+        )
+    );
+    newStreamers.forEach((streamer) => {
+      activeNotifications.value.push({
+        streamer_name: streamer.user_name,
+        view_count: streamer.viewer_count.toString(),
+      });
+    });
+  });
+
+  
 </script>
 
 <template>
@@ -422,12 +456,11 @@
 	>
 		<div
 			class="octo-ui"
-			:class="{ hidden: isIdle, show: listExpand, 'edit-mode': editMode }"
+			:class="{ hidden: isIdle, show: (listExpand || notiExpand), 'edit-mode': editMode }"
 			@mouseenter="handleMouseEnter"
 			@mouseleave="handleMouseLeave"
 		>
-			
-    <!-- QR Code Card -->
+			<!-- QR Code Card -->
 			<v-expand-transition>
 				<v-card v-if="listExpand && url" variant="elevated" class="share-card">
 					<v-row class="d-flex justify-space-between align-center ma-0">
@@ -457,7 +490,7 @@
 					</v-row>
 				</v-card>
 			</v-expand-transition>
-      <!-- Settings Card -->
+			<!-- Settings Card -->
 			<v-expand-transition>
 				<v-card v-if="listExpand" variant="elevated" class="share-card">
 					<v-row class="d-flex justify-space-between align-center ma-0">
@@ -468,14 +501,13 @@
 									v-model="showNotifications"
 									inset
 									color="deep-purple-darken-1"
-                  title="Get notified when a viewer goes live"
 								></v-switch>
 							</v-list-item>
 						</v-col>
 					</v-row>
 				</v-card>
 			</v-expand-transition>
-      <!-- Main Menu Card -->
+			<!-- Main Menu Card -->
 			<v-expand-transition>
 				<v-card
 					v-if="listExpand"
@@ -601,7 +633,7 @@
 					</v-row>
 				</v-card>
 			</v-expand-transition>
-      <!-- Menu Button -->
+			<!-- Menu Button -->
 			<div class="btns-box">
 				<v-btn
 					:icon="!listExpand ? 'mdi-menu' : 'mdi-close'"
@@ -610,9 +642,67 @@
 					@click="handleFavsMenu('toggle')"
 				>
 				</v-btn>
+				<v-expand-transition>
+					<v-btn
+						:icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
+						variant="plain"
+						color="grey-lighten-5"
+						@click="notiExpand = !notiExpand"
+						class="toggleNotiBtn"
+						v-if="showNotifications"
+					>
+					</v-btn>
+				</v-expand-transition>
 			</div>
+      <!-- Notifications Card -->
+			<v-expand-transition>
+				<v-card
+					v-if="notiExpand && showNotifications"
+					variant="elevated"
+					:class="activeNotifications.length === 0 ? 'notifications no-notifications' : 'notifications'"
+				>
+					<v-row class="d-flex justify-space-between align-center ma-0">
+						<v-col cols="12" class="pa-5 pb-2 pt-2">
+							<v-list-item class="pa-0">
+								<h5>
+                <span v-if="activeNotifications.length === 0">
+                  No Notifications yet
+                </span>
+                <span v-else>
+                  Notifications ({{ activeNotifications.length }})
+                </span>
+                </h5>
+								<v-btn
+									variant="text"
+									text="Clear All"
+									color="deep-purple-darken-1"
+                  @click="activeNotifications = []"
+                  v-if="activeNotifications.length > 0"
+								></v-btn>
+							</v-list-item>
+							<v-list-item class="pa-2" v-for="notificationItem in activeNotifications" :key="notificationItem.streamer_name">
+								<p><span>{{ notificationItem.streamer_name }}</span> is now live!</p>
+								<div>
+									<v-btn
+										text="Add"
+										color="deep-purple-darken-1"
+										class="ma-1"
+                    @click="addEmbed(notificationItem.streamer_name); (activeNotifications = activeNotifications.filter((notification) => notification.streamer_name !== notificationItem.streamer_name))"
+									></v-btn>
+									<v-btn
+										variant="plain"
+										icon="mdi-close"
+										color="grey-lighten-1"
+                    @click="activeNotifications = activeNotifications.filter((notification) => notification.streamer_name !== notificationItem.streamer_name)"
+									></v-btn>
+								</div>
+							</v-list-item>
+						</v-col>
+					</v-row>
+				</v-card>
+			</v-expand-transition>
 		</div>
-    <!-- Embedded Streams -->
+		<!-- Embedded Streams -->
 		<draggable
 			v-model="embedsListStore.embedsList"
 			item-key="id"
@@ -786,6 +876,7 @@
 		display: grid;
 
 		padding: 20px;
+		padding-top: 0;
 		grid-template-columns: repeat(auto-fill, minmax(33vw, 1fr));
 		gap: 10px;
 	}
@@ -854,6 +945,25 @@
 	.ghost {
 		opacity: 0.5;
 		border: 5px solid orange;
+	}
+
+	.notifications {
+		position: fixed;
+		top: 70px;
+		right: 40px;
+		width: 450px;
+    max-height: 250px;
+    overflow-y: auto;
+    transition: all 0.3s ease-in-out;
+	}
+  .no-notifications {
+    width: 200px;
+  }
+
+	.toggleNotiBtn {
+		position: fixed;
+		top: 10px;
+		right: 20px;
 	}
 
 	/* Responsive adjustments */
