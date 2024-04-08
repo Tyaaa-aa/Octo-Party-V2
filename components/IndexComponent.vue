@@ -12,16 +12,9 @@
 			: "dark";
 	}
 
-	const items = [
-		{ title: "Click Me" },
-		{ title: "Click Me" },
-		{ title: "Click Me" },
-		{ title: "Click Me 2" },
-	];
-
 	const octoStore = useOctoStore(); // Using the store
 
-	const listExpand = ref<boolean>(true);
+	const listExpand = ref<boolean>(false);
 	const showNotifications = ref<boolean>(true);
 	const notificationCount = ref<number>(0);
 	const notiExpand = ref<boolean>(true);
