@@ -22,6 +22,7 @@
 	const octoStore = useOctoStore(); // Using the store
 
 	const listExpand = ref<boolean>(false);
+	const showNotifications = ref<boolean>(true);
 	type ActionType = NonNullable<"toggle">;
 	const handleFavsMenu = (action: ActionType) => {
 		if (action === "toggle") {
@@ -425,7 +426,8 @@
 			@mouseenter="handleMouseEnter"
 			@mouseleave="handleMouseLeave"
 		>
-			<!-- <div class="qrcode-container" v-if="QRvalue"> -->
+			
+    <!-- QR Code Card -->
 			<v-expand-transition>
 				<v-card v-if="listExpand && url" variant="elevated" class="share-card">
 					<v-row class="d-flex justify-space-between align-center ma-0">
@@ -455,6 +457,25 @@
 					</v-row>
 				</v-card>
 			</v-expand-transition>
+      <!-- Settings Card -->
+			<v-expand-transition>
+				<v-card v-if="listExpand" variant="elevated" class="share-card">
+					<v-row class="d-flex justify-space-between align-center ma-0">
+						<v-col cols="12" class="pa-5 pb-2 pt-2">
+							<v-list-item class="pa-0">
+								<v-switch
+									label="Show Notifications"
+									v-model="showNotifications"
+									inset
+									color="deep-purple-darken-1"
+                  title="Get notified when a viewer goes live"
+								></v-switch>
+							</v-list-item>
+						</v-col>
+					</v-row>
+				</v-card>
+			</v-expand-transition>
+      <!-- Main Menu Card -->
 			<v-expand-transition>
 				<v-card
 					v-if="listExpand"
@@ -580,7 +601,7 @@
 					</v-row>
 				</v-card>
 			</v-expand-transition>
-
+      <!-- Menu Button -->
 			<div class="btns-box">
 				<v-btn
 					:icon="!listExpand ? 'mdi-menu' : 'mdi-close'"
@@ -591,13 +612,7 @@
 				</v-btn>
 			</div>
 		</div>
-		<div class="embeds-container">
-			<!-- <div class="embed-twitch-item" v-for="(streamer) in embedsListStore.embedsList" :key="streamer">
-        <EmbedTwitch :creator="streamer" />
-        <v-btn icon="mdi-close" @click="removeEmbed(streamer)" class="close-btn" color="deep-purple-darken-1"></v-btn>
-        <span class="stream-title">{{ streamer }}</span>
-      </div> -->
-		</div>
+    <!-- Embedded Streams -->
 		<draggable
 			v-model="embedsListStore.embedsList"
 			item-key="id"

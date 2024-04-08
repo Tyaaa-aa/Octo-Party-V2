@@ -31,6 +31,10 @@
     justify-content: space-between !important;
     position: relative;
 }
+.v-selection-control {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
 
 /* .octo-ui *::-webkit-scrollbar {
     width: 0px;
