@@ -920,7 +920,7 @@
 	.close-btn {
 		position: absolute;
 		top: 5px;
-		right: 5px;
+		right: 40px;
 		opacity: 0;
 		transform: translate(100%, -100%) scale(0.5);
 	}
@@ -938,7 +938,7 @@
 	.stream-title {
 		position: absolute;
 		top: 10px;
-		right: 80px;
+		right: 100px;
 		border-radius: 50px;
 		background-color: rgba(0, 0, 0, 0.5);
 		color: white;
