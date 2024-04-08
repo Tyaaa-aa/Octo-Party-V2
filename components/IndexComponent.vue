@@ -121,12 +121,12 @@ const addEmbed = (streamer: string) => {
   embedsListStore.addEmbed(streamer)
 }
 
-const removeEmbed = (streamer: OnlineData) => {
+const removeEmbed = (streamer: string) => {
   console.log(embedsListStore.embedsList)
 
   // console.log(streamer)
 
-  embedsListStore.removeEmbed(streamer.user_name)
+  embedsListStore.removeEmbed(streamer)
 
   console.log(embedsListStore.embedsList)
 }
