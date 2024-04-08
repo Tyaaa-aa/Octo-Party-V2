@@ -16,7 +16,7 @@ const twitchEmbedID = `twitch-embed-${generatedUUID}`;
 onMounted(() => {
   // const parent = window.location.hostname;
   // twitchEmbed.value = `https://player.twitch.tv/?channel=${props.creator}&parent=${parent}`;
-  console.log(`EmbedTwitch mounted with creator: ${props.creator}`);
+  // console.log(`EmbedTwitch mounted with creator: ${props.creator}`);
 
 });
 
