@@ -95,7 +95,7 @@ const removeShareItem = (item: string, event: MouseEvent) => {
     event.stopPropagation()
   }
   octoStore.removeMatchingStringFromOctoData(item)
-  activeStreamers.value = activeStreamers.value.filter((streamer) => streamer !== item)
+  activeStreamers.value = activeStreamers.value.filter((streamer) => streamer.user_name !== item)
   inactiveStreamers.value = inactiveStreamers.value.filter((streamer) => streamer !== item)
 }
 
@@ -109,6 +109,11 @@ const startSearch = () => {
   }, 2000)
 }
 
+interface OnlineData {
+  user_name: string,
+  viewer_count: number,
+}
+
 const embedsListStore = useEmbedsListStore()
 
 const addEmbed = (streamer: string) => {
@@ -116,10 +121,12 @@ const addEmbed = (streamer: string) => {
   embedsListStore.addEmbed(streamer)
 }
 
-const removeEmbed = (streamer: string) => {
+const removeEmbed = (streamer: OnlineData) => {
   console.log(embedsListStore.embedsList)
 
-  embedsListStore.removeEmbed(streamer)
+  // console.log(streamer)
+
+  embedsListStore.removeEmbed(streamer.user_name)
 
   console.log(embedsListStore.embedsList)
 }
@@ -127,12 +134,12 @@ const removeEmbed = (streamer: string) => {
 const errorMsg = ref<string>("")
 const isError = ref<boolean>(false)
 
-const activeStreamers = ref<string[]>([])
+const activeStreamers = ref<OnlineData[]>([])
 const inactiveStreamers = ref<string[]>(octoStore.octoData)
 
 const addAllStreams = () => {
   activeStreamers.value.forEach((streamer) => {
-    embedsListStore.addEmbed(streamer)
+    embedsListStore.addEmbed(streamer.user_name)
   })
 }
 
@@ -174,17 +181,19 @@ const checkStreamerStatus = async (streamer: string[] = octoStore.octoData) => {
 
     const { offline, online } = response.data as { offline: string[]; online: OnlineData[] };
 
-    console.log(offline, online)
+    // console.log(offline)
+    // console.log(online)
 
     let onlineNames = []
     for (let i = 0; i < online.length; i++) {
       onlineNames.push(online[i].user_name)
     }
 
-    activeStreamers.value = onlineNames
+    activeStreamers.value = online
     inactiveStreamers.value = offline
     loading.value = false
 
+    // console.log(activeStreamers.value)
     // console.log(onlineNames);
   } catch (error) {
     // Handle any unexpected errors here
@@ -193,10 +202,6 @@ const checkStreamerStatus = async (streamer: string[] = octoStore.octoData) => {
     isError.value = true
     loading.value = false
   }
-}
-interface OnlineData {
-  user_name: string,
-  viewer_count: number,
 }
 
 
@@ -462,12 +467,12 @@ const dragOptions = computed(() => ({
             <v-col cols="12">
               <v-list>
                 <h4 v-if="activeStreamers.length >= 1">Streaming</h4>
-                <v-list-item v-for="(actStreamer, index) in activeStreamers" :key="index" @click="addEmbed(actStreamer)">
+                <v-list-item v-for="(actStreamer, index) in activeStreamers" :key="index" @click="addEmbed(actStreamer.user_name)" class="streaming_row">
                   <v-btn class="deletebtn" :class="{ 'deletebtn-hide': !editMode }" variant="plain" icon="mdi-delete"
-                    color="red-accent-2" @click="(event: MouseEvent) => removeShareItem(actStreamer, event)"
+                    color="red-accent-2" @click="(event: MouseEvent) => removeShareItem(actStreamer.user_name, event)"
                     v-auto-animate>
                   </v-btn>
-                  {{ actStreamer }}
+                  <span class="active_streamer">{{ actStreamer.user_name }}</span> <span class="streamer_views">{{ actStreamer.viewer_count }}</span>
                 </v-list-item>
                 <v-divider class="ma-5" v-if="activeStreamers.length >= 1"></v-divider>
                 <h4 v-if="inactiveStreamers.length >= 1">Not Streaming</h4>
@@ -579,6 +584,35 @@ main {
   width: 400px;
   height: 400px;
   /* height: clamp(200px, 40vh, 400px); */
+}
+
+/* .streaming_row .v-list-item__content {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
+} */
+
+.active_streamer,
+.streamer_views{
+  flex-basis: 50%;
+}
+
+.streamer_views {
+  text-align: right;
+  padding-right: 23px;
+}
+
+.streamer_views::before {
+  content: "";
+  display:block;
+  width: 8px;
+  height: 8px;
+  background-color: #eb0400;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translate(-50%, -60%);
 }
 
 .deletebtn {
