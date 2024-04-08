@@ -1,17 +1,16 @@
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
 <template>
-  <div>
-    <IndexComponent />
-  </div>
+	<div>
+		<IndexComponent />
+	</div>
 </template>
 
 <style scoped>
-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* height: 100vh; */
-}
+	div {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		/* height: 100vh; */
+	}
 </style>
