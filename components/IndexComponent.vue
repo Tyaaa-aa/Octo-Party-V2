@@ -25,9 +25,6 @@
 	type ActionType = NonNullable<"toggle">;
 	const handleFavsMenu = (action: ActionType) => {
 		if (action === "toggle") {
-			if (!listExpand.value) {
-				console.log("open");
-			}
 			listExpand.value = !listExpand.value;
 			return;
 		}
@@ -586,7 +583,7 @@
 
 			<div class="btns-box">
 				<v-btn
-					icon="mdi-menu"
+					:icon="!listExpand ? 'mdi-menu' : 'mdi-close'"
 					variant="elevated"
 					color="deep-purple-darken-1"
 					@click="handleFavsMenu('toggle')"
