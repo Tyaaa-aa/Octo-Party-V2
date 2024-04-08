@@ -12,12 +12,22 @@
 			: "dark";
 	}
 
-	const octoStore = useOctoStore(); // Using the store
+	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
+	const IDLE_DURATION = 3000;
+	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
+	// const UPDATE_LIST_TIMER = 3000; // 3 seconds in milliseconds
 
+	const octoStore = useOctoStore(); // Using the store
 	const listExpand = ref<boolean>(false);
-	const showNotifications = ref<boolean>(true);
 	const notificationCount = ref<number>(0);
-	const notiExpand = ref<boolean>(true);
+	const notiExpand = ref<boolean>(false);
+
+	interface Notification {
+		streamer_name: string;
+		view_count: string;
+	}
+	const activeNotifications = ref<Notification[]>([]);
+
 	type ActionType = NonNullable<"toggle">;
 	const handleFavsMenu = (action: ActionType) => {
 		if (action === "toggle") {
@@ -29,9 +39,6 @@
 	const isIdle = ref(false);
 	let idleTimer: NodeJS.Timeout | null = null;
 	let isBtnsBoxHovered = false;
-	const IDLE_DURATION = 3000;
-  // const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
-  const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
 	const handleMouseMove = () => {
 		if (isIdle.value && !isBtnsBoxHovered) {
 			isIdle.value = false;
@@ -138,7 +145,8 @@
 	};
 
 	const checkStreamerStatus = async (
-		streamer: string[] = octoStore.octoData
+		streamer: string[] = octoStore.octoData,
+		isInitial: string = ""
 	) => {
 		if (octoStore.octoData.length === 0) return;
 		try {
@@ -194,8 +202,12 @@
 			inactiveStreamers.value = offline;
 			loading.value = false;
 
-			// console.log(activeStreamers.value)
-			// console.log(onlineNames);
+			setTimeout(() => {
+				if (isInitial === "initial") {
+					console.log("Initial Load");
+					activeNotifications.value = [];
+				}
+			}, 10);
 		} catch (error) {
 			// Handle any unexpected errors here
 			console.error("An unexpected error occurred:", error);
@@ -375,7 +387,7 @@
 		if (mediaQuery.addEventListener) {
 			mediaQuery.addEventListener("change", updateIsMobile);
 		}
-		checkStreamerStatus();
+		checkStreamerStatus(octoStore.octoData, "initial");
 
 		setTimeout(() => {
 			loading.value = false;
@@ -410,35 +422,28 @@
 		ghostClass: "ghost",
 	}));
 
-  // If the user has disabled notifications, close the notifications panel
-  watch(showNotifications, (value) => {
-    if (!value) {
-      notiExpand.value = false;
-    }
-  });
+	// If the user has disabled notifications, close the notifications panel
+	watch(ENABLE_NOTIFICATIONS, (value) => {
+		if (!value) {
+			notiExpand.value = false;
+		}
+	});
 
-  interface Notification {
-    streamer_name: string;
-    view_count: string;
-  }
-  const activeNotifications = ref<Notification[]>([]);
-  watch(activeStreamers, (value) => {
-    // check for new streamers and add them to the activeNotifications
-    const newStreamers = value.filter(
-      (streamer) =>
-        !activeNotifications.value.some(
-          (notification) => notification.streamer_name === streamer.user_name
-        )
-    );
-    newStreamers.forEach((streamer) => {
-      activeNotifications.value.push({
-        streamer_name: streamer.user_name,
-        view_count: streamer.viewer_count.toString(),
-      });
-    });
-  });
-
-  
+	watch(activeStreamers, (value) => {
+		// check for new streamers and add them to the activeNotifications
+		const newStreamers = value.filter(
+			(streamer) =>
+				!activeNotifications.value.some(
+					(notification) => notification.streamer_name === streamer.user_name
+				)
+		);
+		newStreamers.forEach((streamer) => {
+			activeNotifications.value.push({
+				streamer_name: streamer.user_name,
+				view_count: streamer.viewer_count.toString(),
+			});
+		});
+	});
 </script>
 
 <template>
@@ -449,7 +454,11 @@
 	>
 		<div
 			class="octo-ui"
-			:class="{ hidden: isIdle, show: (listExpand || notiExpand), 'edit-mode': editMode }"
+			:class="{
+				hidden: isIdle,
+				show: listExpand || notiExpand,
+				'edit-mode': editMode,
+			}"
 			@mouseenter="handleMouseEnter"
 			@mouseleave="handleMouseLeave"
 		>
@@ -491,7 +500,7 @@
 							<v-list-item class="pa-0">
 								<v-switch
 									label="Show Notifications"
-									v-model="showNotifications"
+									v-model="ENABLE_NOTIFICATIONS"
 									inset
 									color="deep-purple-darken-1"
 								></v-switch>
@@ -642,51 +651,74 @@
 						color="grey-lighten-5"
 						@click="notiExpand = !notiExpand"
 						class="toggleNotiBtn"
-						v-if="showNotifications"
+						v-if="ENABLE_NOTIFICATIONS"
 					>
 					</v-btn>
 				</v-expand-transition>
 			</div>
-      <!-- Notifications Card -->
+			<!-- Notifications Card -->
 			<v-expand-transition>
 				<v-card
-					v-if="notiExpand && showNotifications"
+					v-if="notiExpand && ENABLE_NOTIFICATIONS"
 					variant="elevated"
-					:class="activeNotifications.length === 0 ? 'notifications no-notifications' : 'notifications'"
+					:class="
+						activeNotifications.length === 0
+							? 'notifications no-notifications'
+							: 'notifications'
+					"
 				>
 					<v-row class="d-flex justify-space-between align-center ma-0">
 						<v-col cols="12" class="pa-5 pb-2 pt-2">
 							<v-list-item class="pa-0">
 								<h5>
-                <span v-if="activeNotifications.length === 0">
-                  No Notifications yet
-                </span>
-                <span v-else>
-                  Notifications ({{ activeNotifications.length }})
-                </span>
-                </h5>
+									<span v-if="activeNotifications.length === 0">
+										No notifications yet
+									</span>
+									<span v-else>
+										Notifications ({{ activeNotifications.length }})
+									</span>
+								</h5>
 								<v-btn
 									variant="text"
 									text="Clear All"
 									color="deep-purple-darken-1"
-                  @click="activeNotifications = []"
-                  v-if="activeNotifications.length > 0"
+									@click="activeNotifications = []"
+									v-if="activeNotifications.length > 0"
 								></v-btn>
 							</v-list-item>
-							<v-list-item class="pa-2" v-for="notificationItem in activeNotifications" :key="notificationItem.streamer_name">
-								<p><span>{{ notificationItem.streamer_name }}</span> is now live!</p>
+							<v-list-item
+								class="pa-2"
+								v-for="notificationItem in activeNotifications"
+								:key="notificationItem.streamer_name"
+							>
+								<p>
+									<span>{{ notificationItem.streamer_name }}</span> is now live!
+								</p>
 								<div>
 									<v-btn
 										text="Add"
 										color="deep-purple-darken-1"
 										class="ma-1"
-                    @click="addEmbed(notificationItem.streamer_name); (activeNotifications = activeNotifications.filter((notification) => notification.streamer_name !== notificationItem.streamer_name))"
+										@click="
+											addEmbed(notificationItem.streamer_name);
+											activeNotifications = activeNotifications.filter(
+												(notification) =>
+													notification.streamer_name !==
+													notificationItem.streamer_name
+											);
+										"
 									></v-btn>
 									<v-btn
 										variant="plain"
 										icon="mdi-close"
 										color="grey-lighten-1"
-                    @click="activeNotifications = activeNotifications.filter((notification) => notification.streamer_name !== notificationItem.streamer_name)"
+										@click="
+											activeNotifications = activeNotifications.filter(
+												(notification) =>
+													notification.streamer_name !==
+													notificationItem.streamer_name
+											)
+										"
 									></v-btn>
 								</div>
 							</v-list-item>
@@ -945,12 +977,16 @@
 		top: 70px;
 		right: 40px;
 		width: 450px;
-    max-height: 250px;
-    overflow-y: auto;
-    transition: all 0.3s ease-in-out;
+		max-height: 250px;
+		overflow-y: auto;
+		transition: all 0.3s ease-in-out;
 	}
-  .no-notifications {
-    width: 200px;
+	.no-notifications {
+		width: 170px;
+	}
+  .no-notifications * {
+    text-align: center !important;
+    width: 100%;
   }
 
 	.toggleNotiBtn {
