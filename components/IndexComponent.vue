@@ -727,8 +727,8 @@
 				<v-expand-transition>
 					<v-btn
 						:icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
-						variant="plain"
-						color="grey-lighten-5"
+						:variant="!notiExpand ? 'plain' : 'elevated'"
+						:color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
 						@click="notiExpand = !notiExpand"
 						class="toggleNotiBtn"
 						v-if="ENABLE_NOTIFICATIONS"
