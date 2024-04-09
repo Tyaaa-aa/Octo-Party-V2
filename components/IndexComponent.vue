@@ -13,9 +13,10 @@
 	}
 
 	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
+	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
 	const IDLE_DURATION = 3000;
-	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
-	// const UPDATE_LIST_TIMER = 3000; // 3 seconds in milliseconds
+	const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
+	// const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
 
 	const octoStore = useOctoStore(); // Using the store
 	const listExpand = ref<boolean>(false);
@@ -145,14 +146,13 @@
 	};
 
 	const checkStreamerStatus = async (
-		streamer: string[] = octoStore.octoData,
-		isInitial: string = ""
+		streamer: string[] = octoStore.octoData
 	) => {
 		if (octoStore.octoData.length === 0) return;
 		try {
 			loading.value = true;
 			// throw new Error("Test error")
-			const response = await $fetch(`/api/twitch-streamer-status`, {
+			const response = await $fetch(`/api/test-streamer-status`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -201,13 +201,6 @@
 			activeStreamers.value = online;
 			inactiveStreamers.value = offline;
 			loading.value = false;
-
-			setTimeout(() => {
-				if (isInitial === "initial") {
-					console.log("Initial Load");
-					activeNotifications.value = [];
-				}
-			}, 10);
 		} catch (error) {
 			// Handle any unexpected errors here
 			console.error("An unexpected error occurred:", error);
@@ -387,7 +380,7 @@
 		if (mediaQuery.addEventListener) {
 			mediaQuery.addEventListener("change", updateIsMobile);
 		}
-		checkStreamerStatus(octoStore.octoData, "initial");
+		checkStreamerStatus(octoStore.octoData);
 
 		setTimeout(() => {
 			loading.value = false;
@@ -429,24 +422,67 @@
 		}
 	});
 
-	watch(activeStreamers, (value) => {
+	// Remove the streamer when they go offline
+	watch(activeStreamers, (oldvalue, newvalue) => {
 		// check for new streamers and add them to the activeNotifications
-		const newStreamers = value.filter(
+    if (!ENABLE_AUTO_REMOVE_STREAM.value) return
+    console.log("Removing offline streamers")
+		const newStreamers = newvalue.filter(
 			(streamer) =>
-				!activeNotifications.value.some(
-					(notification) => notification.streamer_name === streamer.user_name
+				!oldvalue.some(
+					(oldStreamer) => oldStreamer.user_name === streamer.user_name
 				)
 		);
 		newStreamers.forEach((streamer) => {
-			activeNotifications.value.push({
-				streamer_name: streamer.user_name,
-				view_count: streamer.viewer_count.toString(),
-			});
+			embedsListStore.removeEmbed(streamer.user_name);
+      console.log("Removing streamer: " + streamer.user_name);
 		});
 	});
+
+
+  const debugRemoveStreamer = () => {
+    console.log("Removing streamer")
+    activeStreamers.value = activeStreamers.value.filter(
+      (streamer) => streamer.user_name !== "Pewdiepie"
+    );
+  }
+
+  const debugAddStreamer = () => {
+    console.log("Adding streamer")
+    activeStreamers.value.push({
+      user_name: "Pewdiepie",
+      viewer_count: 1000000
+    });
+  }
 </script>
 
 <template>
+	<div
+		id="debug"
+		style="
+			position: fixed;
+			bottom: 90px;
+			right: 25%;
+			width: 300px;
+			z-index: 99999;
+		"
+	>
+		<v-card>
+			<v-row class="d-flex justify-space-between align-center ma-0">
+        <v-col cols="12" class="pa-5 pb-2 pt-2">
+          <v-list-item class="pa-0">
+            <h5>Debug Menu</h5>
+					</v-list-item>
+					<v-list-item class="pa-4" @click="debugAddStreamer">
+						Add Streamer
+					</v-list-item>
+					<v-list-item class="pa-4" @click="debugRemoveStreamer">
+						Remove Streamer
+					</v-list-item>
+				</v-col>
+			</v-row>
+		</v-card>
+	</div>
 	<main
 		@mousemove="handleMouseMove"
 		@mouseleave="handleMouseLeave"
@@ -501,6 +537,14 @@
 								<v-switch
 									label="Show Notifications"
 									v-model="ENABLE_NOTIFICATIONS"
+									inset
+									color="deep-purple-darken-1"
+								></v-switch>
+							</v-list-item>
+							<v-list-item class="pa-0">
+								<v-switch
+									label="Auto Remove Offline Streams"
+									v-model="ENABLE_AUTO_REMOVE_STREAM"
 									inset
 									color="deep-purple-darken-1"
 								></v-switch>
@@ -668,8 +712,8 @@
 					"
 				>
 					<v-row class="d-flex justify-space-between align-center ma-0">
-						<v-col cols="12" class="pa-5 pb-2 pt-2">
-							<v-list-item class="pa-0">
+						<v-col cols="12" class="pa-5 pb-2 pt-0">
+							<v-list-item class="pa-0 pt-2">
 								<h5>
 									<span v-if="activeNotifications.length === 0">
 										No notifications yet
@@ -686,6 +730,13 @@
 									v-if="activeNotifications.length > 0"
 								></v-btn>
 							</v-list-item>
+						</v-col>
+						<v-col
+							cols="12"
+							class="pa-5 pb-2 pt-0"
+							style="max-height: 200px; overflow: auto"
+              v-if="activeNotifications.length > 0"
+						>
 							<v-list-item
 								class="pa-2"
 								v-for="notificationItem in activeNotifications"
@@ -984,10 +1035,10 @@
 	.no-notifications {
 		width: 170px;
 	}
-  .no-notifications * {
-    text-align: center !important;
-    width: 100%;
-  }
+	.no-notifications * {
+		text-align: center !important;
+		width: 100%;
+	}
 
 	.toggleNotiBtn {
 		position: fixed;
