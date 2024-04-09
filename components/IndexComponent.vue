@@ -12,11 +12,12 @@
 			: "dark";
 	}
 
+  const ENABLE_DEBUG = ref<boolean>(false);
 	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
 	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
 	const IDLE_DURATION = 3000;
-	const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
-	// const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
+	// const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
+	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
 
 	const octoStore = useOctoStore(); // Using the store
 	const listExpand = ref<boolean>(false);
@@ -26,6 +27,7 @@
 	interface Notification {
 		streamer_name: string;
 		view_count: string;
+    timestamp: Date;
 	}
 	const activeNotifications = ref<Notification[]>([]);
 
@@ -152,7 +154,7 @@
 		try {
 			loading.value = true;
 			// throw new Error("Test error")
-			const response = await $fetch(`/api/test-streamer-status`, {
+			const response = await $fetch(`/api/twitch-streamer-status`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -423,37 +425,67 @@
 	});
 
 	// Remove the streamer when they go offline
-	watch(activeStreamers, (oldvalue, newvalue) => {
-		// check for new streamers and add them to the activeNotifications
-    if (!ENABLE_AUTO_REMOVE_STREAM.value) return
-    console.log("Removing offline streamers")
-		const newStreamers = newvalue.filter(
+	watch(activeStreamers, (newvalue, oldvalue) => {
+		// check for streamers that have gone offline and remove them
+		// console.log("Removing offline streamers");
+		console.log(oldvalue);
+		console.log(newvalue);
+		const offlineStreamers = oldvalue.filter(
 			(streamer) =>
-				!oldvalue.some(
+				!newvalue.some(
 					(oldStreamer) => oldStreamer.user_name === streamer.user_name
 				)
 		);
-		newStreamers.forEach((streamer) => {
+
+		const newItem = newvalue.find((newItem) => {
+			return !oldvalue.some((oldItem) => {
+				return (
+					oldItem.user_name === newItem.user_name
+				);
+			});
+		});
+
+		if (newItem && ENABLE_NOTIFICATIONS.value && oldvalue.length > 0) {
+			console.log("New item found:", newItem);
+      activeNotifications.value.push({
+        streamer_name: newItem.user_name,
+        view_count: newItem.viewer_count.toString(),
+        timestamp: new Date(),
+      });
+		} else {
+			console.log("No new item found.");
+		}
+
+		if (!ENABLE_AUTO_REMOVE_STREAM.value) return;
+
+		offlineStreamers.forEach((streamer) => {
 			embedsListStore.removeEmbed(streamer.user_name);
-      console.log("Removing streamer: " + streamer.user_name);
+			console.log("Removing streamer: " + streamer.user_name);
 		});
 	});
 
+	// watch(activeStreamers, (oldvalue, newvalue) => {
+	// 	if (!ENABLE_NOTIFICATIONS) return;
+	//   // Check for new streamers and show a notification
+	//   console.log(oldvalue, newvalue);
 
-  const debugRemoveStreamer = () => {
-    console.log("Removing streamer")
-    activeStreamers.value = activeStreamers.value.filter(
-      (streamer) => streamer.user_name !== "Pewdiepie"
-    );
-  }
+	// });
 
-  const debugAddStreamer = () => {
-    console.log("Adding streamer")
-    activeStreamers.value.push({
-      user_name: "Pewdiepie",
-      viewer_count: 1000000
-    });
-  }
+	const debugRemoveStreamer = () => {
+		console.log("Removing streamer");
+		activeStreamers.value = activeStreamers.value.filter(
+			(streamer) => streamer.user_name !== "LinusTech"
+		);
+	};
+
+	const debugAddStreamer = () => {
+		console.log("Adding streamer");
+		
+    activeStreamers.value = [...activeStreamers.value, {
+      user_name: "LinusTech",
+      viewer_count: 1000000,
+    }];
+	};
 </script>
 
 <template>
@@ -462,22 +494,26 @@
 		style="
 			position: fixed;
 			bottom: 90px;
-			right: 25%;
+			right: 460px;
 			width: 300px;
 			z-index: 99999;
 		"
+    v-if="ENABLE_DEBUG"
 	>
 		<v-card>
 			<v-row class="d-flex justify-space-between align-center ma-0">
-        <v-col cols="12" class="pa-5 pb-2 pt-2">
-          <v-list-item class="pa-0">
-            <h5>Debug Menu</h5>
+				<v-col cols="12" class="pa-5 pb-2 pt-2">
+					<v-list-item class="pa-0">
+						<h5 style="color: orange">Debug Menu</h5>
 					</v-list-item>
 					<v-list-item class="pa-4" @click="debugAddStreamer">
 						Add Streamer
 					</v-list-item>
 					<v-list-item class="pa-4" @click="debugRemoveStreamer">
 						Remove Streamer
+					</v-list-item>
+					<v-list-item class="pa-4" @click="checkStreamerStatus()">
+						Refresh List
 					</v-list-item>
 				</v-col>
 			</v-row>
@@ -735,7 +771,7 @@
 							cols="12"
 							class="pa-5 pb-2 pt-0"
 							style="max-height: 200px; overflow: auto"
-              v-if="activeNotifications.length > 0"
+							v-if="activeNotifications.length > 0"
 						>
 							<v-list-item
 								class="pa-2"
@@ -743,7 +779,7 @@
 								:key="notificationItem.streamer_name"
 							>
 								<p>
-									<span>{{ notificationItem.streamer_name }}</span> is now live!
+									<span class="notification-time" :title="notificationItem.timestamp.toString()">{{ notificationItem.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) }}</span><span>{{ notificationItem.streamer_name }}</span> is now live!
 								</p>
 								<div>
 									<v-btn
@@ -1045,6 +1081,17 @@
 		top: 10px;
 		right: 20px;
 	}
+
+  .notifications p {
+    font-size: 0.95em;
+  }
+
+  .notification-time {
+    font-size: 0.8em;
+    margin-right: 10px;
+    /* font-style: italic; */
+    color: #8a8a8a;
+  }
 
 	/* Responsive adjustments */
 	@media (max-width: 1280px) {

@@ -3,6 +3,10 @@ export default defineEventHandler(async (event) => {
         data: {
             "online": [
                 {
+                    "user_name": "CDawgVA",
+                    "viewer_count": 696969
+                },
+                {
                     "user_name": "Wolfsbanee",
                     "viewer_count": 282
                 },
@@ -13,10 +17,6 @@ export default defineEventHandler(async (event) => {
                 {
                     "user_name": "trashtastepodcast",
                     "viewer_count": 235
-                },
-                {
-                    "user_name": "CDawgVA",
-                    "viewer_count": 696969
                 },
                 {
                     "user_name": "supercatkei",
