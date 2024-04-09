@@ -726,14 +726,18 @@
 				</v-btn>
 				<v-expand-transition>
 					<v-btn
-						:icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
-						:variant="!notiExpand ? 'plain' : 'elevated'"
-						:color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
-						@click="notiExpand = !notiExpand"
-						class="toggleNotiBtn"
-						v-if="ENABLE_NOTIFICATIONS"
-					>
-					</v-btn>
+          <div>
+            <v-btn
+              :icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
+              :variant="!notiExpand ? 'plain' : 'elevated'"
+              :color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
+              @click="notiExpand = !notiExpand"
+              class="toggleNotiBtn"
+              v-if="ENABLE_NOTIFICATIONS"
+            >
+            </v-btn>
+            <span class="notiCount" v-if="!notiExpand && activeNotifications.length > 0">{{ activeNotifications.length }}</span>
+          </div>
 				</v-expand-transition>
 			</div>
 			<!-- Notifications Card -->
@@ -1081,6 +1085,23 @@
 		top: 10px;
 		right: 20px;
 	}
+
+    content: "69";
+    position: fixed;
+		top: 15px;
+		right: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.8em;
+    padding: 2px;
+    pointer-events: none;
+    z-index: 999;
+    background-color: red;
+  }
 
   .notifications p {
     font-size: 0.95em;
