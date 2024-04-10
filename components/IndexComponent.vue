@@ -444,11 +444,12 @@
 
 		if (newItem && ENABLE_NOTIFICATIONS.value && oldvalue.length > 0) {
 			console.log("New item found:", newItem);
-			activeNotifications.value.push({
+			const newNoti = {
 				streamer_name: newItem.user_name,
 				view_count: newItem.viewer_count.toString(),
 				timestamp: new Date(),
-			});
+			}
+      activeNotifications.value = [newNoti, ...activeNotifications.value]
 		} else {
 			console.log("No new item found.");
 		}
@@ -734,7 +735,7 @@
 						</v-btn>
 						<span
 							class="notiCount"
-							v-if="!notiExpand && activeNotifications.length > 0"
+							v-if="ENABLE_NOTIFICATIONS && !notiExpand && activeNotifications.length > 0"
 							>{{ activeNotifications.length }}</span
 						>
 					</div>
@@ -766,14 +767,14 @@
 									variant="text"
 									text="Clear All"
 									color="deep-purple-darken-1"
-									@click="activeNotifications = []"
+									@click="activeNotifications = []; notiExpand = false"
 									v-if="activeNotifications.length > 0"
 								></v-btn>
 							</v-list-item>
 						</v-col>
 						<v-col
 							cols="12"
-							class="pa-3 pt-2 pb-1 d-flex flex-column-reverse"
+							class="pa-3 pt-2 pb-1 notifications-list"
 							style="max-height: 200px; overflow: auto"
 							v-if="activeNotifications.length > 0"
 						>
@@ -785,7 +786,7 @@
 								<p class="notification-item">
 									<span
 										class="notification-time"
-										:title="notificationItem.timestamp.toString()"
+										:title="notificationItem.timestamp.toLocaleTimeString() + ' - ' + notificationItem.timestamp.toDateString()"
 										>{{
 											notificationItem.timestamp.toLocaleTimeString([], {
 												hour: "2-digit",
