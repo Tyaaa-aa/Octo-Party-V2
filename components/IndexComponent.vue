@@ -21,13 +21,12 @@
 
 	const octoStore = useOctoStore(); // Using the store
 	const listExpand = ref<boolean>(false);
-	const notificationCount = ref<number>(0);
 	const notiExpand = ref<boolean>(false);
 
 	interface Notification {
 		streamer_name: string;
 		view_count: string;
-    timestamp: Date;
+		timestamp: Date;
 	}
 	const activeNotifications = ref<Notification[]>([]);
 
@@ -439,19 +438,17 @@
 
 		const newItem = newvalue.find((newItem) => {
 			return !oldvalue.some((oldItem) => {
-				return (
-					oldItem.user_name === newItem.user_name
-				);
+				return oldItem.user_name === newItem.user_name;
 			});
 		});
 
 		if (newItem && ENABLE_NOTIFICATIONS.value && oldvalue.length > 0) {
 			console.log("New item found:", newItem);
-      activeNotifications.value.push({
-        streamer_name: newItem.user_name,
-        view_count: newItem.viewer_count.toString(),
-        timestamp: new Date(),
-      });
+			activeNotifications.value.push({
+				streamer_name: newItem.user_name,
+				view_count: newItem.viewer_count.toString(),
+				timestamp: new Date(),
+			});
 		} else {
 			console.log("No new item found.");
 		}
@@ -725,19 +722,22 @@
 				>
 				</v-btn>
 				<v-expand-transition>
-					<v-btn
-          <div>
-            <v-btn
-              :icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
-              :variant="!notiExpand ? 'plain' : 'elevated'"
-              :color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
-              @click="notiExpand = !notiExpand"
-              class="toggleNotiBtn"
-              v-if="ENABLE_NOTIFICATIONS"
-            >
-            </v-btn>
-            <span class="notiCount" v-if="!notiExpand && activeNotifications.length > 0">{{ activeNotifications.length }}</span>
-          </div>
+					<div>
+						<v-btn
+							:icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
+							:variant="!notiExpand ? 'plain' : 'elevated'"
+							:color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
+							@click="notiExpand = !notiExpand"
+							class="toggleNotiBtn"
+							v-if="ENABLE_NOTIFICATIONS"
+						>
+						</v-btn>
+						<span
+							class="notiCount"
+							v-if="!notiExpand && activeNotifications.length > 0"
+							>{{ activeNotifications.length }}</span
+						>
+					</div>
 				</v-expand-transition>
 			</div>
 			<!-- Notifications Card -->
@@ -773,17 +773,28 @@
 						</v-col>
 						<v-col
 							cols="12"
-							class="pa-5 pb-2 pt-0"
+							class="pa-3 pt-2 pb-1 d-flex flex-column-reverse"
 							style="max-height: 200px; overflow: auto"
 							v-if="activeNotifications.length > 0"
 						>
 							<v-list-item
-								class="pa-2"
+								class="pa-2 pt-1"
 								v-for="notificationItem in activeNotifications"
 								:key="notificationItem.streamer_name"
 							>
-								<p>
-									<span class="notification-time" :title="notificationItem.timestamp.toString()">{{ notificationItem.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }) }}</span><span>{{ notificationItem.streamer_name }}</span> is now live!
+								<p class="notification-item">
+									<span
+										class="notification-time"
+										:title="notificationItem.timestamp.toString()"
+										>{{
+											notificationItem.timestamp.toLocaleTimeString([], {
+												hour: "2-digit",
+												minute: "2-digit",
+												hour12: true,
+											})
+										}}</span
+									>{{ notificationItem.streamer_name }} is now
+									live!
 								</p>
 								<div>
 									<v-btn
@@ -1086,33 +1097,33 @@
 		right: 20px;
 	}
 
-    content: "69";
-    position: fixed;
+	.notiCount {
+		position: fixed;
 		top: 15px;
 		right: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    font-size: 0.8em;
-    padding: 2px;
-    pointer-events: none;
-    z-index: 999;
-    background-color: red;
-  }
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 50%;
+		width: 18px;
+		height: 18px;
+		font-size: 0.8em;
+		padding: 2px;
+		pointer-events: none;
+		z-index: 999;
+		background-color: #EF5350;
+	}
 
-  .notifications p {
-    font-size: 0.95em;
-  }
+	.notifications p {
+		font-size: 0.95em;
+	}
 
-  .notification-time {
-    font-size: 0.8em;
-    margin-right: 10px;
-    /* font-style: italic; */
-    color: #8a8a8a;
-  }
+	.notification-time {
+		font-size: 0.8em;
+		margin-right: 10px;
+		/* font-style: italic; */
+		color: #8a8a8a;
+	}
 
 	/* Responsive adjustments */
 	@media (max-width: 1280px) {
@@ -1120,4 +1131,20 @@
 			grid-template-columns: 1fr;
 		}
 	}
+  @media (max-width: 600px) {
+    .notifications {
+      right: 50%;
+      max-width: 90vw;
+      transform: translateX(50%);
+    }
+    .notification-item {
+      display: flex;
+      align-items: center;
+      max-width: 70%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 5px
+    }
+  }
 </style>

@@ -48,6 +48,10 @@
 	border-radius: 8px !important;
 }
 
+.notification-item .v-btn {
+    width: auto !important;
+}
+
 /* .octo-ui *::-webkit-scrollbar {
     width: 0px;
 } */
