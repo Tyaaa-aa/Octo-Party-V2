@@ -804,8 +804,7 @@
 												hour12: true,
 											})
 										}}</span
-									>{{ notificationItem.streamer_name }} is now
-									live!
+									>{{ notificationItem.streamer_name }} is live!
 								</p>
 								<div>
 									<v-btn
