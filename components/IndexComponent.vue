@@ -12,16 +12,18 @@
 			: "dark";
 	}
 
-  const ENABLE_DEBUG = ref<boolean>(false);
-	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
-	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
+	const octoStore = useOctoStore(); // Using the store
+	const userSettings = useSettingStore();
+
+	const listExpand = ref<boolean>(false);
+	const notiExpand = ref<boolean>(false);
+
+	const ENABLE_DEBUG = ref<boolean>(false);
+	const ENABLE_NOTIFICATIONS = ref<boolean>(userSettings.Notifications);
+	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(userSettings.AutoRemove);
 	const IDLE_DURATION = 3000;
 	// const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
 	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
-
-	const octoStore = useOctoStore(); // Using the store
-	const listExpand = ref<boolean>(false);
-	const notiExpand = ref<boolean>(false);
 
 	interface Notification {
 		streamer_name: string;
@@ -418,9 +420,14 @@
 
 	// If the user has disabled notifications, close the notifications panel
 	watch(ENABLE_NOTIFICATIONS, (value) => {
+		userSettings.setNotifications(value);
 		if (!value) {
 			notiExpand.value = false;
 		}
+	});
+
+	watch(ENABLE_AUTO_REMOVE_STREAM, (value) => {
+		userSettings.setAutoRemove(value);
 	});
 
 	// Remove the streamer when they go offline
@@ -478,11 +485,14 @@
 
 	const debugAddStreamer = () => {
 		console.log("Adding streamer");
-		
-    activeStreamers.value = [...activeStreamers.value, {
-      user_name: "LinusTech",
-      viewer_count: 1000000,
-    }];
+
+		activeStreamers.value = [
+			...activeStreamers.value,
+			{
+				user_name: "LinusTech",
+				viewer_count: 1000000,
+			},
+		];
 	};
 </script>
 
@@ -496,7 +506,7 @@
 			width: 300px;
 			z-index: 99999;
 		"
-    v-if="ENABLE_DEBUG"
+		v-if="ENABLE_DEBUG"
 	>
 		<v-card>
 			<v-row class="d-flex justify-space-between align-center ma-0">
@@ -737,8 +747,7 @@
 						<span
 							class="notiCount"
 							v-if="ENABLE_NOTIFICATIONS && !notiExpand && activeNotifications.length > 0"
-							>{{ activeNotifications.length }}</span
-						>
+							>{{ activeNotifications.length }}</span>
 					</div>
 				</v-expand-transition>
 			</div>
@@ -1133,6 +1142,7 @@
 			grid-template-columns: 1fr;
 		}
 	}
+
   @media (max-width: 600px) {
     .notifications {
       right: 50%;

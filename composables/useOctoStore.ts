@@ -1,5 +1,5 @@
 interface OctoStoreState {
-  octoData: string[];
+  octoData: string[],
 }
 
 export default defineStore({
@@ -27,7 +27,7 @@ export default defineStore({
       if (index >= 0) {
         this.octoData.splice(index, 1);
       }
-    }
+    },
     // Other actions related to manipulating octoData can be added here
   },
   persist: {
