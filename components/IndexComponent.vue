@@ -717,6 +717,7 @@
 			<div class="btns-box">
 				<v-btn
 					:icon="!listExpand ? 'mdi-menu' : 'mdi-close'"
+					:class="!listExpand ? 'main-btn' : 'main-btn main-btn-close'"
 					variant="elevated"
 					color="deep-purple-darken-1"
 					@click="handleFavsMenu('toggle')"
@@ -729,7 +730,7 @@
 							:variant="!notiExpand ? 'plain' : 'elevated'"
 							:color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
 							@click="notiExpand = !notiExpand"
-							class="toggleNotiBtn"
+							:class="!notiExpand ? 'toggleNotiBtn main-btn' : 'toggleNotiBtn main-btn main-btn-close'"
 							v-if="ENABLE_NOTIFICATIONS"
 						>
 						</v-btn>

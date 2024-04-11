@@ -52,6 +52,14 @@
     width: auto !important;
 }
 
+.main-btn .v-icon{
+	transition: all 0.2s ease-in-out;
+	rotate: 0deg;
+} 
+.main-btn-close .v-icon{
+	rotate: -90deg;
+}
+
 /* .octo-ui *::-webkit-scrollbar {
     width: 0px;
 } */
