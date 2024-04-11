@@ -1126,6 +1126,10 @@
 
 	.notifications p {
 		font-size: 0.95em;
+		max-width: 65%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 
 	.notification-time {
