@@ -664,7 +664,7 @@
 					<v-row no-gutters class="pl-5 pr-5 favs-list-container">
 						<v-col cols="12">
 							<v-list>
-								<h4 v-if="activeStreamers.length >= 1">Streaming</h4>
+								<h4 v-if="activeStreamers.length >= 1">Streaming ({{ activeStreamers.length }})</h4>
 								<v-list-item
 									v-for="(actStreamer, index) in activeStreamers"
 									:key="index"
@@ -692,7 +692,7 @@
 									class="ma-5"
 									v-if="activeStreamers.length >= 1"
 								></v-divider>
-								<h4 v-if="inactiveStreamers.length >= 1">Not Streaming</h4>
+								<h4 v-if="inactiveStreamers.length >= 1">Not Streaming ({{ inactiveStreamers.length }})</h4>
 								<v-list-item
 									v-for="(nonActStreamer, index) in inactiveStreamers"
 									:key="index"
