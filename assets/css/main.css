@@ -59,6 +59,9 @@
 .main-btn-close .v-icon{
 	rotate: -90deg;
 }
+.v-snackbar__content {
+	backdrop-filter: blur(16px);
+}
 
 /* .octo-ui *::-webkit-scrollbar {
     width: 0px;
