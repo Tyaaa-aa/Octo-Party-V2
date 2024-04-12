@@ -1,4 +1,8 @@
 {
+  "name": "octo.party",
+  "version": "1.0.0",
+  "description": "Octo.Party is a straightforward solution for watching multiple Twitch streams at once. With Octo Party, you can easily create lists of Twitch streams to watch simultaneously, and generate shareable links to share with your friends.",
+  "license": "GPL-3.0-only",
   "private": true,
   "type": "module",
   "scripts": {

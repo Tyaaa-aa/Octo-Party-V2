@@ -1,48 +1,156 @@
-# Nuxt Example
+#  Octo.Party
 
-Deploy your [Nuxt](https://nuxt.com) project to Vercel with zero configuration.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/examples/nuxtjs&template=nuxtjs)
 
-_Live Example: https://nuxtjs-template.vercel.app_
+Octo.Party is a straightforward solution for watching multiple Twitch streams at once. With Octo Party, you can easily create lists of Twitch streams to watch simultaneously, and generate shareable links to share with your friends.
 
-Look at the [Nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
 
-## Setup
 
-Make sure to install the dependencies:
+##  Features
+
+
+
+-  **Multi-Stream Viewing**: Watch multiple Twitch streams concurrently
+
+-  **Notifications**: Get notified when your favourite streamer comes online
+
+-  **Create Your Own List**: Easily create and manage your list of Twitch streams
+
+-  **Streamlined Experience**: Enjoy a straightforward and intuitive interface for seamless viewing
+
+-  **Shareable Lists**: Create shareable links for your list to send your friends or to your other devices
+
+
+
+
+##  Usage
+
+
+
+###  Installation
+
+
+
+Clone the repository:
+
+
 
 ```bash
-# yarn
-yarn
 
-# npm
-npm install
+git  clone  https://github.com/Tyaaa-aa/Octo-Party-V2.git
 
-# pnpm
-pnpm install --shamefully-hoist
 ```
 
-## Development Server
 
-Start the development server on http://localhost:3000
+
+Install dependencies:
+
+
 
 ```bash
-npm run dev
+
+cd  octo-party
+
+npm  install
+
 ```
 
-## Production
+
+
+###  Development Server
+
+
+
+Start the development server:
+
+
+
+```bash
+
+npm  run  dev
+
+```
+
+
+
+The application will be running at [http://localhost:3000](http://localhost:3000).
+
+
+
+###  Production Build
+
+
 
 Build the application for production:
 
-```bash
-npm run build
-```
 
-Locally preview production build:
 
 ```bash
-npm run preview
+
+npm  run  build
+
 ```
 
-Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/deployment#presets) for more information.
+
+
+Preview the production build locally:
+
+
+
+```bash
+
+npm  run  preview
+
+```
+
+
+###  Database
+
+
+
+[Supabase](https://supabase.com/docs) is used for storing shared lists. Here is the DB structure 
+
+Table Name: `shared_links_table`
+
+| Name         | Data Type              |
+|--------------|------------------------|
+| id           | bigint (int8)          |
+| created_at   | timestamp with time zone (timestamptz) |
+| shared_data  | text                   |
+| shared_link  | text                   |
+
+
+
+##  Contributing
+
+
+
+Contributions are welcome! If you'd like to contribute to Octo.Party, please follow these steps:
+
+
+
+1.  Fork the repository.
+
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
+
+3.  Commit your changes (`git commit -m 'Add some amazing feature'`).
+
+4.  Push to the branch (`git push origin feature/AmazingFeature`).
+
+5.  Open a pull request.
+
+
+
+##  License
+
+
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE) - see the [LICENSE](LICENSE) file for details.
+
+
+
+##  Contact
+
+
+
+For any inquiries or feedback, feel free to reach out to us at [contact@octo.party](mailto:contact@octo.party).
