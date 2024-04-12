@@ -455,8 +455,8 @@
 				streamer_name: newItem.user_name,
 				view_count: newItem.viewer_count.toString(),
 				timestamp: new Date(),
-			}
-      activeNotifications.value = [newNoti, ...activeNotifications.value]
+			};
+			activeNotifications.value = [newNoti, ...activeNotifications.value];
 		} else {
 			console.log("No new item found.");
 		}
@@ -664,7 +664,9 @@
 					<v-row no-gutters class="pl-5 pr-5 favs-list-container">
 						<v-col cols="12">
 							<v-list>
-								<h4 v-if="activeStreamers.length >= 1">Streaming ({{ activeStreamers.length }})</h4>
+								<h4 v-if="activeStreamers.length >= 1">
+									Streaming ({{ activeStreamers.length }})
+								</h4>
 								<v-list-item
 									v-for="(actStreamer, index) in activeStreamers"
 									:key="index"
@@ -692,7 +694,9 @@
 									class="ma-5"
 									v-if="activeStreamers.length >= 1"
 								></v-divider>
-								<h4 v-if="inactiveStreamers.length >= 1">Not Streaming ({{ inactiveStreamers.length }})</h4>
+								<h4 v-if="inactiveStreamers.length >= 1">
+									Not Streaming ({{ inactiveStreamers.length }})
+								</h4>
 								<v-list-item
 									v-for="(nonActStreamer, index) in inactiveStreamers"
 									:key="index"
@@ -733,23 +737,34 @@
 					@click="handleFavsMenu('toggle')"
 				>
 				</v-btn>
-				<v-expand-transition>
-					<div>
+				<div>
+					<v-expand-transition>
 						<v-btn
 							:icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
 							:variant="!notiExpand ? 'plain' : 'elevated'"
 							:color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
 							@click="notiExpand = !notiExpand"
-							:class="!notiExpand ? 'toggleNotiBtn main-btn' : 'toggleNotiBtn main-btn main-btn-close'"
+							:class="
+								!notiExpand
+									? 'toggleNotiBtn main-btn'
+									: 'toggleNotiBtn main-btn main-btn-close'
+							"
 							v-if="ENABLE_NOTIFICATIONS"
 						>
 						</v-btn>
+					</v-expand-transition>
+					<v-slide-y-transition>
 						<span
 							class="notiCount"
-							v-if="ENABLE_NOTIFICATIONS && !notiExpand && activeNotifications.length > 0"
-							>{{ activeNotifications.length }}</span>
-					</div>
-				</v-expand-transition>
+							v-if="
+								ENABLE_NOTIFICATIONS &&
+								!notiExpand &&
+								activeNotifications.length > 0
+							"
+							>{{ activeNotifications.length }}
+						</span>
+					</v-slide-y-transition>
+				</div>
 			</div>
 			<!-- Notifications Card -->
 			<v-expand-transition>
@@ -777,7 +792,10 @@
 									variant="text"
 									text="Clear All"
 									color="deep-purple-darken-1"
-									@click="activeNotifications = []; notiExpand = false"
+									@click="
+										activeNotifications = [];
+										notiExpand = false;
+									"
 									v-if="activeNotifications.length > 0"
 								></v-btn>
 							</v-list-item>
@@ -796,7 +814,11 @@
 								<p class="notification-item">
 									<span
 										class="notification-time"
-										:title="notificationItem.timestamp.toLocaleTimeString() + ' - ' + notificationItem.timestamp.toDateString()"
+										:title="
+											notificationItem.timestamp.toLocaleTimeString() +
+											' - ' +
+											notificationItem.timestamp.toDateString()
+										"
 										>{{
 											notificationItem.timestamp.toLocaleTimeString([], {
 												hour: "2-digit",
@@ -1121,7 +1143,7 @@
 		padding: 2px;
 		pointer-events: none;
 		z-index: 999;
-		background-color: #EF5350;
+		background-color: #ef5350;
 	}
 
 	.notifications p {
@@ -1146,20 +1168,20 @@
 		}
 	}
 
-  @media (max-width: 600px) {
-    .notifications {
-      right: 50%;
-      max-width: 90vw;
-      transform: translateX(50%);
-    }
-    .notification-item {
-      display: flex;
-      align-items: center;
-      max-width: 70%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      margin-right: 5px
-    }
-  }
+	@media (max-width: 600px) {
+		.notifications {
+			right: 50%;
+			max-width: 90vw;
+			transform: translateX(50%);
+		}
+		.notification-item {
+			display: flex;
+			align-items: center;
+			max-width: 70%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			margin-right: 5px;
+		}
+	}
 </style>
