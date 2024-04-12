@@ -19,6 +19,7 @@
 	const notiExpand = ref<boolean>(false);
 
 	const ENABLE_DEBUG = ref<boolean>(false);
+	const SHOW_DEBUG_MENU = ref<boolean>(ENABLE_DEBUG.value);
 	const ENABLE_NOTIFICATIONS = ref<boolean>(userSettings.Notifications);
 	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(userSettings.AutoRemove);
 	const IDLE_DURATION = 3000;
@@ -497,36 +498,38 @@
 </script>
 
 <template>
-	<div
-		id="debug"
-		style="
-			position: fixed;
-			bottom: 90px;
-			right: 460px;
-			width: 300px;
-			z-index: 99999;
-		"
-		v-if="ENABLE_DEBUG"
-	>
-		<v-card>
-			<v-row class="d-flex justify-space-between align-center ma-0">
-				<v-col cols="12" class="pa-5 pb-2 pt-2">
-					<v-list-item class="pa-0">
-						<h5 style="color: orange">Debug Menu</h5>
-					</v-list-item>
-					<v-list-item class="pa-4" @click="debugAddStreamer">
-						Add Streamer
-					</v-list-item>
-					<v-list-item class="pa-4" @click="debugRemoveStreamer">
-						Remove Streamer
-					</v-list-item>
-					<v-list-item class="pa-4" @click="checkStreamerStatus()">
-						Refresh List
-					</v-list-item>
-				</v-col>
-			</v-row>
-		</v-card>
-	</div>
+	<v-expand-transition>
+		<div
+			id="debug"
+			style="
+				position: fixed;
+				bottom: 90px;
+				right: 460px;
+				width: 300px;
+				z-index: 99999;
+			"
+			v-if="SHOW_DEBUG_MENU"
+		>
+			<v-card>
+				<v-row class="d-flex justify-space-between align-center ma-0">
+					<v-col cols="12" class="pa-5 pb-2 pt-2">
+						<v-list-item class="pa-0">
+							<h5 style="color: orange">Debug Menu</h5>
+						</v-list-item>
+						<v-list-item class="pa-4" @click="debugAddStreamer">
+							Add Streamer
+						</v-list-item>
+						<v-list-item class="pa-4" @click="debugRemoveStreamer">
+							Remove Streamer
+						</v-list-item>
+						<v-list-item class="pa-4" @click="checkStreamerStatus()">
+							Refresh List
+						</v-list-item>
+					</v-col>
+				</v-row>
+			</v-card>
+		</div>
+	</v-expand-transition>
 	<main
 		@mousemove="handleMouseMove"
 		@mouseleave="handleMouseLeave"
@@ -577,6 +580,14 @@
 				<v-card v-if="listExpand" variant="elevated" class="share-card">
 					<v-row class="d-flex justify-space-between align-center ma-0">
 						<v-col cols="12" class="pa-5 pb-2 pt-2">
+							<v-list-item class="pa-0" v-if="ENABLE_DEBUG">
+								<v-switch
+									label="Enable Debug Mode"
+									v-model="SHOW_DEBUG_MENU"
+									inset
+									color="deep-purple-darken-1"
+								></v-switch>
+							</v-list-item>
 							<v-list-item class="pa-0">
 								<v-switch
 									label="Show Notifications"
