@@ -23,10 +23,7 @@ export default defineStore({
       }
     },
     removeMatchingStringFromOctoData(matchingString: string) {
-      const index = this.octoData.indexOf(matchingString);
-      if (index >= 0) {
-        this.octoData.splice(index, 1);
-      }
+      this.octoData = this.octoData.filter((item) => item.toUpperCase() !== matchingString.toUpperCase());
     },
     // Other actions related to manipulating octoData can be added here
   },

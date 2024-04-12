@@ -98,10 +98,10 @@
 		}
 		octoStore.removeMatchingStringFromOctoData(item);
 		activeStreamers.value = activeStreamers.value.filter(
-			(streamer) => streamer.user_name !== item
+			(streamer) => streamer.user_name.toUpperCase() !== item.toUpperCase()
 		);
 		inactiveStreamers.value = inactiveStreamers.value.filter(
-			(streamer) => streamer !== item
+			(streamer) => streamer.toUpperCase() !== item.toUpperCase()
 		);
 	};
 
