@@ -130,7 +130,10 @@
 	const removeEmbed = (streamer: string) => {
 		console.log(embedsListStore.embedsList);
 
-		// console.log(streamer)
+		if (expandedEmbed.value === streamer) {
+			isExpand.value = false;
+			expandedEmbed.value = "";
+		}
 
 		embedsListStore.removeEmbed(streamer);
 
