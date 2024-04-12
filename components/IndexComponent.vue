@@ -1222,10 +1222,12 @@
 		position: absolute;
 		top: 62.5%;
 		flex-wrap: wrap;
+		justify-content: center;
 	}
 	.embeds-container-expand .embed-twitch-item {
 		/* min-width: 30%; */
 		max-width: 32.5%;
+		margin: 0;
 		/* border: 2px solid red; */
 	}
 
