@@ -104,6 +104,10 @@ npm  run  preview
 ```
 
 
+###  Twitch API Key
+You can get your Twitch API keys at the [Twitch Developers Console](https://dev.twitch.tv/console) 
+
+
 ###  Database
 
 
@@ -120,6 +124,16 @@ Table Name: `shared_links_table`
 | shared_link  | text                   |
 
 
+
+###  Enviroment Variables
+Create your `.env` file, copy the following and add your keys
+
+```
+SUPABASE_KEY=<YOUR_SUPABASE_KEY>
+SUPABASE_URL=<YOUR_SUPABASE_URL>
+TWITCH_CLIENTID=<YOUR_TWITCH_CLIENTID>
+TWITCH_SECRET=<YOUR_TWITCH_SECRET>
+```
 
 ##  Contributing
 
