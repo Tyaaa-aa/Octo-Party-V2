@@ -495,6 +495,20 @@
 			},
 		];
 	};
+
+	const isExpand = ref<boolean>(false);
+	const expandedEmbed = ref<string>("");
+	const expandEmbed = (streamer: string) => {
+		console.log(streamer);
+
+		if (isExpand.value && expandedEmbed.value === streamer) {
+			isExpand.value = false;
+			expandedEmbed.value = "";
+			return;
+		}
+		isExpand.value = true;
+		expandedEmbed.value = streamer;
+	};
 </script>
 
 <template>
@@ -876,23 +890,42 @@
 		<draggable
 			v-model="embedsListStore.embedsList"
 			item-key="id"
-			class="embeds-container"
+			:class="
+				!isExpand
+					? 'embeds-container'
+					: 'embeds-container embeds-container-expand'
+			"
 			drag-class="drag"
 			ghost-class="ghost"
 		>
 			<template #item="{ element }">
-				<keep-alive>
-					<div class="embed-twitch-item">
-						<EmbedTwitch :creator="element" :key="element" />
-						<v-btn
-							icon="mdi-close"
-							@click="removeEmbed(element)"
-							class="close-btn"
-							color="deep-purple-darken-1"
-						></v-btn>
-						<span class="stream-title">{{ element }}</span>
-					</div>
-				</keep-alive>
+				<div
+					class="embed-twitch-item"
+					:class="
+						element === expandedEmbed
+							? 'embed-twitch-item expanded-embed'
+							: 'embed-twitch-item'
+					"
+				>
+					<EmbedTwitch :creator="element" :key="element" />
+					<v-btn
+						icon="mdi-close"
+						@click="removeEmbed(element)"
+						class="close-btn"
+						color="deep-purple-darken-1"
+					></v-btn>
+					<v-btn
+						:icon="
+							element === expandedEmbed
+								? 'mdi-arrow-collapse'
+								: 'mdi-arrow-expand'
+						"
+						@click="expandEmbed(element)"
+						class="expand-btn"
+						color="deep-purple-darken-1"
+					></v-btn>
+					<span class="stream-title">{{ element }}</span>
+				</div>
 			</template>
 		</draggable>
 	</main>
@@ -1070,7 +1103,16 @@
 		transform: translate(100%, -100%) scale(0.5);
 	}
 
-	.embed-twitch-item:hover .close-btn {
+	.expand-btn {
+		position: absolute;
+		top: 5px;
+		right: 90px;
+		opacity: 0;
+		transform: translate(100%, -100%) scale(0.5);
+	}
+
+	.embed-twitch-item:hover .close-btn,
+	.embed-twitch-item:hover .expand-btn {
 		opacity: 1;
 		transform: translate(0, 0) scale(0.7);
 		transition: all 0.2s ease-in-out;
@@ -1083,7 +1125,7 @@
 	.stream-title {
 		position: absolute;
 		top: 10px;
-		right: 100px;
+		right: 150px;
 		border-radius: 50px;
 		background-color: rgba(0, 0, 0, 0.5);
 		color: white;
@@ -1170,6 +1212,30 @@
 		margin-right: 10px;
 		/* font-style: italic; */
 		color: #8a8a8a;
+	}
+
+	.embeds-container-expand {
+		display: flex;
+		position: absolute;
+		top: 62.5%;
+		flex-wrap: wrap;
+	}
+	.embeds-container-expand .embed-twitch-item {
+		/* min-width: 30%; */
+		max-width: 32.5%;
+		/* border: 2px solid red; */
+	}
+
+	.expanded-embed {
+		width: calc(100% - 40px);
+		max-width: 100% !important;
+		height: 60%;
+		position: fixed;
+		top: 10px;
+		left: 20px;
+		border-radius: 7px;
+		z-index: 1;
+		/* border: 2px solid red; */
 	}
 
 	/* Responsive adjustments */
