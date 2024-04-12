@@ -19,9 +19,9 @@
 	const notiExpand = ref<boolean>(false);
 
 	const ENABLE_DEBUG = ref<boolean>(false);
-	const SHOW_DEBUG_MENU = ref<boolean>(ENABLE_DEBUG.value);
-	const ENABLE_NOTIFICATIONS = ref<boolean>(userSettings.Notifications);
-	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(userSettings.AutoRemove);
+	const SHOW_DEBUG_MENU = ref<boolean>(false);
+	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
+	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
 	const IDLE_DURATION = 3000;
 	// const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
 	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
@@ -396,6 +396,12 @@
 		const updateTimer = setInterval(() => {
 			checkStreamerStatus();
 		}, UPDATE_LIST_TIMER); // 5 minutes in milliseconds
+
+		// Apply user saved settings
+		ENABLE_NOTIFICATIONS.value = userSettings.Notifications
+		ENABLE_AUTO_REMOVE_STREAM.value = userSettings.AutoRemove
+		
+
 	});
 
 	onUnmounted(() => {
