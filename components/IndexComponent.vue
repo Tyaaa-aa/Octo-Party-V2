@@ -528,6 +528,19 @@
 		isExpand.value = true;
 		expandedEmbed.value = streamer;
 	};
+
+	const isFullscreen = ref<boolean>(false);
+	const toggleFullscreen = () => {
+		if (!document.fullscreenElement) {
+			document.documentElement.requestFullscreen()
+			isFullscreen.value = true
+		} else {
+			if (document.exitFullscreen) {
+				document.exitFullscreen()
+				isFullscreen.value = false
+			}
+		}
+	};
 </script>
 
 <template>
@@ -779,6 +792,14 @@
 					variant="elevated"
 					color="deep-purple-darken-1"
 					@click="handleFavsMenu('toggle')"
+				>
+				</v-btn>
+				<v-btn
+					:icon="!isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'"
+					class="fullscreen-btn"
+					variant="plain"
+					color="grey-lighten-5"
+					@click="toggleFullscreen"
 				>
 				</v-btn>
 				<div>
@@ -1199,6 +1220,12 @@
 		position: fixed;
 		top: 10px;
 		right: 20px;
+	}
+	.fullscreen-btn {
+		position: fixed;
+		top: 10px;
+		right: 70px;
+	
 	}
 
 	.notiCount {
