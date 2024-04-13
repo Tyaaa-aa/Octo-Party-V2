@@ -920,11 +920,11 @@
 			<template #item="{ element }">
 				<div
 					class="embed-twitch-item"
-					:class="
-						element === expandedEmbed
-							? 'embed-twitch-item expanded-embed'
-							: 'embed-twitch-item'
-					"
+					:class="{
+						'embed-twitch-item expanded-embed': element === expandedEmbed,
+						'embed-twitch-item': !(element === expandedEmbed),
+						'expand-solo': embedsListStore.embedsList.length === 1
+					}"
 				>
 					<EmbedTwitch :creator="element" :key="element" />
 					<v-btn
@@ -1261,6 +1261,14 @@
 		z-index: 1;
 		/* border: 2px solid red; */
 	}
+	.expand-solo {
+		height: unset !important;
+		max-height: 100vh !important;
+		width: 98%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		max-width: unset !important;
+	}
 
 	@media (max-width: 1574px) {
 		.expanded-embed {
@@ -1271,6 +1279,15 @@
 
 		.embeds-container-expand {
 			top: 52.5%;
+		}
+		
+		.expand-solo {
+			height: unset !important;
+			max-height: 100vh !important;
+			width: 98%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			max-width: unset !important;
 		}
 
 		/* .embeds-container-expand .embed-twitch-item:not(.expanded-embed) {
