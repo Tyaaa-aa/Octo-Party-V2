@@ -475,6 +475,10 @@
 
 		offlineStreamers.forEach((streamer) => {
 			embedsListStore.removeEmbed(streamer.user_name);
+			if (streamer.user_name === expandedEmbed.value) {
+				isExpand.value = false;
+				expandedEmbed.value = "";
+			}
 			console.log("Removing streamer: " + streamer.user_name);
 		});
 	});
