@@ -923,7 +923,7 @@
 					:class="{
 						'embed-twitch-item expanded-embed': element === expandedEmbed,
 						'embed-twitch-item': !(element === expandedEmbed),
-						'expand-solo': embedsListStore.embedsList.length === 1
+						'expand-solo': embedsListStore.embedsList.length === 1 && isExpand,
 					}"
 				>
 					<EmbedTwitch :creator="element" :key="element" />
