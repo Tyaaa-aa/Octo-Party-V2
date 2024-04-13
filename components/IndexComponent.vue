@@ -467,6 +467,12 @@
 				timestamp: new Date(),
 			};
 			activeNotifications.value = [newNoti, ...activeNotifications.value];
+			
+			if (notiExpand.value) return;
+			notiExpand.value = true;
+			setTimeout(() => {
+				notiExpand.value = false;
+			}, 3000);
 		} else {
 			console.log("No new item found.");
 		}
