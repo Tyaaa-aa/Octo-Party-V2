@@ -18,7 +18,7 @@
 	const listExpand = ref<boolean>(false);
 	const notiExpand = ref<boolean>(false);
 
-	const ENABLE_DEBUG = ref<boolean>(false);
+	const ENABLE_DEBUG = ref<boolean>(true);
 	const SHOW_DEBUG_MENU = ref<boolean>(false);
 	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
 	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
@@ -1226,29 +1226,47 @@
 	.embeds-container-expand {
 		display: flex;
 		position: absolute;
-		top: 62.5%;
+		top: 67.5%;
 		flex-wrap: wrap;
 		justify-content: center;
 	}
 	.embeds-container-expand .embed-twitch-item {
-		/* min-width: 30%; */
-		max-width: 32.5%;
+		min-width: 300px;
+		max-width: 500px;
+		/* max-height: 30vh; */
 		margin: 0;
 		/* border: 2px solid red; */
 	}
 
 	.expanded-embed {
-		width: calc(100% - 40px);
-		max-width: 100% !important;
-		height: 60%;
+		width: unset;
+		max-width: calc(100% - 45px) !important;
+		max-height: 65% !important;
+		height: 100% !important;
 		position: fixed;
 		top: 10px;
-		left: 20px;
+		left: 50%;
+		transform: translateX(-50%);
 		border-radius: 7px;
 		z-index: 1;
 		/* border: 2px solid red; */
 	}
 
+	@media (max-width: 1574px) {
+		.expanded-embed {
+			max-height: 50% !important;
+			height: auto !important;
+			width: 100%;
+		}
+
+		.embeds-container-expand {
+			top: 52.5%;
+		}
+
+		/* .embeds-container-expand .embed-twitch-item:not(.expanded-embed) {
+			width: 50%;
+		} */
+	}
 	/* Responsive adjustments */
 	@media (max-width: 1280px) {
 		.embeds-container {
