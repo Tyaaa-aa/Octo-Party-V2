@@ -802,7 +802,10 @@
 									About
 								</v-btn>
 							</div>
-							<span class="pa-2">Developed by <a href="https://surya.place/" target="_blank">Surya</a> and <a href="https://tya.design/" target="_blank">Tya</a></span>
+							<span class="pa-2 text-center">
+								Concept by <a href="https://surya.place/" target="_blank">Surya</a> |
+								Developed by <a href="https://tya.design/" target="_blank">Tya</a>
+							</span>
 						</v-row>
 					</v-row>
 				</v-card>
