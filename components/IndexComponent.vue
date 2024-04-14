@@ -801,7 +801,7 @@
 				</v-btn>
 				<v-btn
 					:icon="!isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'"
-					class="fullscreen-btn"
+					:class="ENABLE_NOTIFICATIONS ? 'fullscreen-btn' : 'fullscreen-btn fullscreen-btn-right'"
 					variant="plain"
 					color="grey-lighten-5"
 					@click="toggleFullscreen"
@@ -1237,7 +1237,10 @@
 		position: fixed;
 		top: 10px;
 		right: 70px;
-	
+		transition: right 0.3s ease-in-out;
+	}
+	.fullscreen-btn-right {
+		right: 20px;
 	}
 
 	.notiCount {
