@@ -783,12 +783,12 @@
 								</v-list-item>
 								<div
 									v-if="octoStore.octoData.length === 0"
-									class="mt-3"
+									class="mt-3 text-center"
 									style="display: block"
 								>
 									<h2>Your list is empty :(</h2>
 									<br />
-									<span>You can add streamers by searching for them</span>
+									<!-- <span>You can add streamers by searching for them</span> -->
 								</div>
 							</v-list>
 						</v-col>
