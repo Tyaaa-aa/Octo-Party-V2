@@ -473,7 +473,7 @@
 			notiExpand.value = true;
 			setTimeout(() => {
 				notiExpand.value = false;
-			}, 3000);
+			}, 5000);
 		} else {
 			console.log("No new item found.");
 		}
