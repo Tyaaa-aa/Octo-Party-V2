@@ -1160,9 +1160,8 @@
 	.embeds-container {
 		width: 100%;
 		display: grid;
-
 		padding: 20px;
-		padding-top: 0;
+		padding-top: 40px;
 		grid-template-columns: repeat(auto-fill, minmax(33vw, 1fr));
 		gap: 10px;
 	}
@@ -1175,6 +1174,7 @@
 		overflow: hidden;
 		position: relative;
 		transition: all 0.2s ease-in-out;
+		max-height: 46.5vh;
 		/* border: 2px solid orange; */
 	}
 
@@ -1222,19 +1222,27 @@
 	}
 
 	.embed-drag-box {
-		display: none;
+		opacity: 0;
+		pointer-events: none;
 		position: absolute;
-		top: 2px;
+		top: 0;
 		left: 50%;
-		width: 99%;
-		height: 99%;
+		width: 100%;
+		height: 100%;
+		padding: 5px 10px;
+		background-image: linear-gradient(
+			rgba(0, 0, 0, 0.8),
+			rgba(0, 0, 0, 0)
+		);
+		border-radius: 7px;
 		transform: translateX(-50%);
 		user-select: none;
 		cursor: grab;
 		transition: all 0.2s ease-in-out;
 	}
 	.embed-dragging .embed-drag-box{
-		display: block;
+		opacity: 1;
+		pointer-events: auto;
 	}
 
 	.drag div {
@@ -1321,6 +1329,7 @@
 		flex-wrap: wrap;
 		justify-content: center;
 		overflow: auto;
+		padding-top: 0px;
 		/* outline: 2px solid red; */
 		max-height: 32.5%;
 	}
@@ -1359,6 +1368,13 @@
 			max-height: 50% !important;
 			height: auto !important;
 			width: 100%;
+		}
+
+		.embeds-container-expand {
+			top: 52.5%;
+			height: 45%;
+			min-height: 46%;
+			padding-bottom: 0;
 		}
 
 		.embeds-container-expand {
