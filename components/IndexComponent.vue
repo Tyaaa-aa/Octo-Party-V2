@@ -497,10 +497,12 @@
 
 	// });
 
+	const debugStreamer: string = 'LinusTech'
+
 	const debugRemoveStreamer = () => {
 		console.log("Removing streamer");
 		activeStreamers.value = activeStreamers.value.filter(
-			(streamer) => streamer.user_name !== "LinusTech"
+			(streamer) => streamer.user_name !== debugStreamer
 		);
 	};
 
@@ -510,8 +512,9 @@
 		activeStreamers.value = [
 			...activeStreamers.value,
 			{
-				user_name: "LinusTech",
-				viewer_count: 1000000,
+				user_name: debugStreamer,
+				viewer_count: 888888,
+				profile_picture: "https://octo.party/logo.svg",
 			},
 		];
 	};
