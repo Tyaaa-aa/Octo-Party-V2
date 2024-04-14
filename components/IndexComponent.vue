@@ -589,7 +589,7 @@
 			class="octo-ui"
 			:class="{
 				hidden: isIdle,
-				show: listExpand || notiExpand,
+				show: listExpand || notiExpand || embedsListStore.embedsList.length === 0,
 				'edit-mode': editMode,
 			}"
 			@mouseenter="handleMouseEnter"
