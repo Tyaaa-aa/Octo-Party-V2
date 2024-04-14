@@ -93,3 +93,4 @@ sw.*
 
 # Vercel
 .vercel
+server/api/twitch-streamer-status-w-offline-photos.post.ts
