@@ -551,6 +551,8 @@
 			}
 		}
 	};
+
+	const isDragging = ref<boolean>(false);
 </script>
 
 <template>
@@ -963,6 +965,8 @@
 			"
 			drag-class="drag"
 			ghost-class="ghost"
+			@start="isDragging = true"
+			@end="isDragging = false"
 		>
 			<template #item="{ element }">
 				<div
@@ -971,6 +975,7 @@
 						'embed-twitch-item expanded-embed': element === expandedEmbed,
 						'embed-twitch-item': !(element === expandedEmbed),
 						'expand-solo': embedsListStore.embedsList.length === 1 && isExpand,
+						'embed-dragging': isDragging,
 					}"
 				>
 					<EmbedTwitch :creator="element" :key="element" />
@@ -990,7 +995,12 @@
 						class="expand-btn"
 						color="deep-purple-darken-1"
 					></v-btn>
-					<span class="stream-title">{{ element }}</span>
+					<v-btn
+						icon="mdi-drag"
+						class="drag-btn"
+						color="deep-purple-darken-1"
+					></v-btn>
+					<span class="embed-drag-box">{{ element }}</span>
 				</div>
 			</template>
 		</draggable>
@@ -1184,8 +1194,24 @@
 		transform: translate(100%, -100%) scale(0.5);
 	}
 
+	.drag-btn {
+		position: absolute;
+		top: 5px;
+		right: 140px;
+		opacity: 0;
+		cursor: grab;
+		transform: translate(100%, -100%) scale(0.5);
+	}
+	.drag-btn:active{
+		cursor: grabbing;
+	}
+	.expanded-embed .drag-btn {
+		display: none;
+	}
+
 	.embed-twitch-item:hover .close-btn,
-	.embed-twitch-item:hover .expand-btn {
+	.embed-twitch-item:hover .expand-btn,
+	.embed-twitch-item:hover .drag-btn {
 		opacity: 1;
 		transform: translate(0, 0) scale(0.7);
 		transition: all 0.2s ease-in-out;
@@ -1195,28 +1221,20 @@
 		filter: hue-rotate(80deg);
 	}
 
-	.stream-title {
+	.embed-drag-box {
+		display: none;
 		position: absolute;
-		top: 10px;
-		right: 150px;
-		border-radius: 50px;
-		background-color: rgba(0, 0, 0, 0.5);
-		color: white;
-		padding: 5px 20px;
-		font-size: 1.2rem;
-		font-weight: bold;
-		text-align: center;
-		text-shadow: 1px 1px 2px black;
-		backdrop-filter: blur(5px);
-		opacity: 0;
+		top: 2px;
+		left: 50%;
+		width: 99%;
+		height: 99%;
+		transform: translateX(-50%);
 		user-select: none;
 		cursor: grab;
 		transition: all 0.2s ease-in-out;
-		/* border: 2px solid red; */
 	}
-
-	.embed-twitch-item:hover .stream-title {
-		opacity: 1;
+	.embed-dragging .embed-drag-box{
+		display: block;
 	}
 
 	.drag div {
