@@ -18,7 +18,7 @@
 	const listExpand = ref<boolean>(false);
 	const notiExpand = ref<boolean>(false);
 
-	const ENABLE_DEBUG = ref<boolean>(false);
+	const ENABLE_DEBUG = ref<boolean>(true);
 	const SHOW_DEBUG_MENU = ref<boolean>(false);
 	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
 	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
@@ -1278,6 +1278,9 @@
 		top: 67.5%;
 		flex-wrap: wrap;
 		justify-content: center;
+		overflow: auto;
+		/* outline: 2px solid red; */
+		max-height: 32.5%;
 	}
 	.embeds-container-expand .embed-twitch-item {
 		min-width: 300px;
