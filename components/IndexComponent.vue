@@ -118,6 +118,7 @@
 	interface OnlineData {
 		user_name: string;
 		viewer_count: number;
+		profile_picture: string;
 	}
 
 	const embedsListStore = useEmbedsListStore();
@@ -740,6 +741,7 @@
 										v-auto-animate
 									>
 									</v-btn>
+									<img :src="actStreamer.profile_picture" alt="Profile picture" class="profile_picture">
 									<span class="active_streamer">{{
 										actStreamer.user_name
 									}}</span>
@@ -1057,6 +1059,13 @@
 	.active_streamer,
 	.streamer_views {
 		flex-basis: 50%;
+	}
+
+	.profile_picture {
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		margin-right: 13px;
 	}
 
 	.streamer_views {
