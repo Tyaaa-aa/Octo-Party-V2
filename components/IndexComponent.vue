@@ -24,7 +24,7 @@
 	const listExpand = ref<boolean>(false);
 	const notiExpand = ref<boolean>(false);
 
-	const ENABLE_DEBUG = ref<boolean>(true);
+	const ENABLE_DEBUG = ref<boolean>(false);
 	const SHOW_DEBUG_MENU = ref<boolean>(false);
 	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
 	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
@@ -467,6 +467,8 @@
 				return oldItem.user_name === newItem.user_name;
 			});
 		});
+
+		if(isSuccess.value && successMsg.value === "Streamer added to list!") return;
 
 		if (newItem && ENABLE_NOTIFICATIONS.value && oldvalue.length > 0) {
 			console.log("New item found:", newItem);
