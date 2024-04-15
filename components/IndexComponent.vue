@@ -999,6 +999,12 @@
 						icon="mdi-drag"
 						class="drag-btn"
 						color="deep-purple-darken-1"
+						v-if="
+						// Show the drag button if there is more than 1 embed an embed is not expanded
+						(!isExpand && embedsListStore.embedsList.length > 1)
+						||
+						// Show the drag button if there is more than 2 embeds an embed is expanded
+						(isExpand && embedsListStore.embedsList.length > 2)"
 					></v-btn>
 					<span class="embed-drag-box">{{ element }}</span>
 				</div>
