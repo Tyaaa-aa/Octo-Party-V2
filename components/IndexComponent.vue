@@ -135,7 +135,7 @@
 	};
 
 	const removeEmbed = (streamer: string) => {
-		console.log(embedsListStore.embedsList);
+		// console.log(embedsListStore.embedsList);
 
 		if (expandedEmbed.value === streamer) {
 			isExpand.value = false;
@@ -144,7 +144,7 @@
 
 		embedsListStore.removeEmbed(streamer);
 
-		console.log(embedsListStore.embedsList);
+		// console.log(embedsListStore.embedsList);
 	};
 
 	const errorMsg = ref<string>("");
@@ -453,8 +453,8 @@
 	watch(activeStreamers, (newvalue, oldvalue) => {
 		// check for streamers that have gone offline and remove them
 		// console.log("Removing offline streamers");
-		console.log(oldvalue);
-		console.log(newvalue);
+		// console.log(oldvalue);
+		// console.log(newvalue);
 		const offlineStreamers = oldvalue.filter(
 			(streamer) =>
 				!newvalue.some(
@@ -485,7 +485,7 @@
 				notiExpand.value = false;
 			}, 5000);
 		} else {
-			console.log("No new item found.");
+			// console.log("No new item found.");
 		}
 
 		if (!ENABLE_AUTO_REMOVE_STREAM.value) return;
@@ -532,7 +532,7 @@
 	const isExpand = ref<boolean>(false);
 	const expandedEmbed = ref<string>("");
 	const expandEmbed = (streamer: string) => {
-		console.log(streamer);
+		// console.log(streamer);
 
 		if (isExpand.value && expandedEmbed.value === streamer) {
 			isExpand.value = false;
