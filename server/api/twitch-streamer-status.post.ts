@@ -67,7 +67,7 @@ async function checkStreamersStatus(streamers: string[], clientID: string, clien
     return { error: streamResponse.error };
   }
 
-  const onlineStreamers = [];
+  const onlineStreamers: {user_name: string, viewer_count: number, profile_picture: string; }[] = [];
   let offlineStreamers: string[] = []; // Define type explicitly
 
   for (const stream of streamResponse.data) {
@@ -109,6 +109,9 @@ async function checkStreamersStatus(streamers: string[], clientID: string, clien
     return { error: 'Error fetching profile photos' };
   }
 
+  offlineStreamers = offlineStreamers.filter((streamer) => !onlineStreamers.some((onlineStreamer) => onlineStreamer.user_name.toLowerCase() === streamer.toLowerCase()));
+  // REALLY REALLY BAD YOU NEED TO PROPERLY FIX THIS ONE DAY THIS IS A BANDAID SOLUTION!!!
+  
   const data = {
     online: onlineStreamers,
     offline: offlineStreamers,
