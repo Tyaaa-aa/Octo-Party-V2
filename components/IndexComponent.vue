@@ -1059,7 +1059,7 @@
 	.octo-ui {
 		position: fixed;
 		bottom: 20px;
-		right: 40px;
+		right: 20px;
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
@@ -1408,6 +1408,11 @@
 	@media (max-width: 1280px) {
 		.embeds-container {
 			grid-template-columns: 1fr;
+			padding-left: 5px;
+			padding-right: 5px;
+		}
+		.octo-ui {
+			right: 10px;
 		}
 	}
 
