@@ -20,6 +20,7 @@ Octo.Party is a straightforward solution for watching multiple Twitch streams at
 
 -  **Shareable Lists**: Create shareable links for your list to send your friends or to your other devices
 
+-  **No Accounts**: No need to sign up or login. Just add your favourite streamers and Octo.Party will save your data locally
 
 
 
