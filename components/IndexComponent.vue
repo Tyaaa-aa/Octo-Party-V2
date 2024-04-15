@@ -366,6 +366,8 @@
 			}
 
 			console.log("Streamer exist, adding to list");
+			isSuccess.value = true;
+			successMsg.value = "Streamer added to list!";
 			octoStore.addStringToOctoData(streamerExist);
 			checkStreamerStatus();
 			searchedStreamer.value = "";
