@@ -1,8 +1,8 @@
 <template>
 	<v-container>
 		<!-- Logo and Title -->
-		<v-row align="center">
-			<v-col cols="12" class="text-center" style="max-width: 600px; margin: 0 auto;">
+		<v-row align="center" >
+			<v-col cols="12" class="text-center pa-5" style="max-width: 600px; margin: 0 auto;">
 				<img src="/logo.svg" alt="Octo.Party Logo" class="logo mb-4" />
 				<h1 class="display-2">About Octo.Party</h1>
 				<p class="subtitle-1">
@@ -13,9 +13,9 @@
 
 		<!-- Features -->
 		<v-row>
-			<v-col cols="12" md="6" class="mx-auto">
+			<v-col cols="12" md="7" class="mx-auto">
 				<h2 class="headline">Features</h2>
-				<ul>
+				<ul class="pa-5">
 					<li>
 						Multi-Stream Viewing: Watch multiple Twitch streams concurrently
 					</li>
