@@ -969,6 +969,7 @@
 			ghost-class="ghost"
 			@start="isDragging = true"
 			@end="isDragging = false"
+			handle=".drag-btn"
 		>
 			<template #item="{ element }">
 				<div
