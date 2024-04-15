@@ -1001,7 +1001,8 @@
 					<v-btn
 						icon="mdi-drag"
 						class="drag-btn"
-						color="deep-purple-darken-1"
+						color="grey-lighten-2"
+						variant="text"
 						v-if="
 						// Show the drag button if there is more than 1 embed an embed is not expanded
 						(!isExpand && embedsListStore.embedsList.length > 1)
@@ -1190,26 +1191,26 @@
 	.close-btn {
 		position: absolute;
 		top: 5px;
-		right: 40px;
+		right: 20px;
 		opacity: 0;
-		transform: translate(100%, -100%) scale(0.5);
+		transform: translate(0, 0) scale(0.5);
 	}
 
 	.expand-btn {
 		position: absolute;
 		top: 5px;
-		right: 90px;
+		right: 70px;
 		opacity: 0;
-		transform: translate(100%, -100%) scale(0.5);
+		transform: translate(0, 0) scale(0.5);
 	}
 
 	.drag-btn {
 		position: absolute;
 		top: 5px;
-		right: 140px;
+		right: 110px;
 		opacity: 0;
 		cursor: grab;
-		transform: translate(100%, -100%) scale(0.5);
+		transform: translate(0, 0) scale(0.5);
 	}
 	.drag-btn:active{
 		cursor: grabbing;
