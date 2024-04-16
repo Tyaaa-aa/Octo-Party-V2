@@ -60,9 +60,6 @@
 .main-btn-close .v-icon{
 	rotate: -90deg;
 }
-.v-snackbar__content {
-	backdrop-filter: blur(16px);
-}
 
 .drag-btn .v-icon{
     font-size: calc(var(--v-icon-size-multiplier)* 2em) !important;

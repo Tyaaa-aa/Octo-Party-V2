@@ -658,10 +658,6 @@
 								class="copy-url"
 							></v-text-field>
 						</v-col>
-						<!-- <div class="copy-url">
-            <a :href=url>{{ url !== "" ? url : 'Shared URL' }}</a>
-            <v-btn icon="mdi-content-copy" variant="flat" color="grey-darken-3" @click="copySharedLink"></v-btn>
-          </div> -->
 					</v-row>
 				</v-card>
 			</v-expand-transition>
@@ -1056,26 +1052,24 @@
 
 	<v-snackbar
 		:timeout="3000"
-		color="yellow-darken-3"
-		variant="tonal"
+		color="red-darken-1"
 		v-model="isError"
 		rounded="pill"
 	>
 		<span class="pr-md-5">{{ errorMsg }}</span>
-		<v-btn color="yellow-lighten-3" variant="text" @click="isError = false">
+		<v-btn color="red-lighten-1" variant="flat" @click="isError = false">
 			Close
 		</v-btn>
 	</v-snackbar>
 
 	<v-snackbar
 		:timeout="3000"
-		color="green-darken-2"
-		variant="tonal"
+		color="deep-purple-accent-4"
 		v-model="isSuccess"
 		rounded="pill"
 	>
 		<span class="pr-md-5">{{ successMsg }}</span>
-		<v-btn color="green-accent-4" variant="text" @click="isSuccess = false">
+		<v-btn color="deep-purple-accent-2" variant="flat" @click="isSuccess = false">
 			Close
 		</v-btn>
 	</v-snackbar>
