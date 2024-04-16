@@ -28,6 +28,8 @@
 	const SHOW_DEBUG_MENU = ref<boolean>(false);
 	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
 	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
+	const ENABLE_REMEMBER_LAST_LAYOUT = ref<boolean>(true);
+
 	const IDLE_DURATION = 3000;
 	// const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
 	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
@@ -409,7 +411,29 @@
 		// Apply user saved settings
 		ENABLE_NOTIFICATIONS.value = userSettings.Notifications
 		ENABLE_AUTO_REMOVE_STREAM.value = userSettings.AutoRemove
-		
+		ENABLE_REMEMBER_LAST_LAYOUT.value = userSettings.RememberLastLayout
+
+		// Update saved layout
+		watch(embedsListStore, (streamerList, oldStreamerList) => {
+			if (ENABLE_REMEMBER_LAST_LAYOUT.value) {
+				userSettings.updateRememberedList(isExpand.value, expandedEmbed.value, streamerList.embedsList);
+			}
+		});
+
+		watch(isExpand, (value) => {
+			if (ENABLE_REMEMBER_LAST_LAYOUT.value) {
+				userSettings.updateRememberedList(value, expandedEmbed.value, embedsListStore.embedsList);
+			}
+		});
+
+		if (userSettings.RememberLastLayout) {
+			const { expanded, streamerList } = userSettings.LastLayout;
+			isExpand.value = expanded.status;
+			expandedEmbed.value = expanded.streamer;
+			embedsListStore.embedsList = streamerList;
+		} else {
+			userSettings.updateRememberedList(false, "", []);
+		}
 
 	});
 
@@ -437,7 +461,7 @@
 		ghostClass: "ghost",
 	}));
 
-	// If the user has disabled notifications, close the notifications panel
+	// SETTINGS CARD (TO BE MOVED TO A SEPARATE COMPONENT)
 	watch(ENABLE_NOTIFICATIONS, (value) => {
 		userSettings.setNotifications(value);
 		if (!value) {
@@ -498,6 +522,10 @@
 			}
 			console.log("Removing streamer: " + streamer.user_name);
 		});
+	});
+	
+	watch(ENABLE_REMEMBER_LAST_LAYOUT, (value) => {
+		userSettings.setRememberLastLayout(value);
 	});
 
 	// watch(activeStreamers, (oldvalue, newvalue) => {
@@ -662,6 +690,14 @@
 								<v-switch
 									label="Auto Remove Offline Streams"
 									v-model="ENABLE_AUTO_REMOVE_STREAM"
+									inset
+									color="deep-purple-darken-1"
+								></v-switch>
+							</v-list-item>
+							<v-list-item class="pa-0">
+								<v-switch
+									label="Remember Last Layout"
+									v-model="ENABLE_REMEMBER_LAST_LAYOUT"
 									inset
 									color="deep-purple-darken-1"
 								></v-switch>

@@ -1,6 +1,14 @@
 interface SettingStoreState {
   Notifications: boolean,
   AutoRemove: boolean,
+  RememberLastLayout: boolean,
+  LastLayout: {
+    expanded: {
+      status: boolean,
+      streamer: string,
+    },
+    streamerList: string[],
+  },
 }
 
 export default defineStore({
@@ -8,6 +16,14 @@ export default defineStore({
   state: (): SettingStoreState => ({
     Notifications: true,
     AutoRemove: true,
+    RememberLastLayout: true,
+    LastLayout: {
+      expanded: {
+        status: false,
+        streamer: '',
+      },
+      streamerList: [],
+    },
   }),
   actions: {
     // Action to update octoData with a new array of strings
@@ -17,6 +33,14 @@ export default defineStore({
     setAutoRemove(newData: boolean) {
       this.AutoRemove = newData;
     },
+    setRememberLastLayout(newData: boolean) {
+      this.RememberLastLayout = newData;
+    },
+    updateRememberedList(isExpand: boolean, expandedEmbed: string, streamerList: string[]) {
+      this.LastLayout.expanded.status = isExpand;
+      this.LastLayout.expanded.streamer = expandedEmbed;
+      this.LastLayout.streamerList = streamerList;
+    }
     // Other actions related to manipulating octoData can be added here
   },
   persist: {
