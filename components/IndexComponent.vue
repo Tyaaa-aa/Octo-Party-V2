@@ -11,12 +11,6 @@
 			: "dark";
 	}
 
-	const router = useRouter()
-
-	const goToAboutPage = () => {
-		router.push("about")
-	}
-
 	const octoStore = useOctoStore(); // Using the store
 	const userSettings = useSettingStore();
 
