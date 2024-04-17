@@ -532,27 +532,6 @@
 
 	// });
 
-	const debugStreamer: string = 'LinusTech'
-
-	const debugRemoveStreamer = () => {
-		console.log("Removing streamer");
-		activeStreamers.value = activeStreamers.value.filter(
-			(streamer) => streamer.user_name !== debugStreamer
-		);
-	};
-
-	const debugAddStreamer = () => {
-		console.log("Adding streamer");
-
-		activeStreamers.value = [
-			...activeStreamers.value,
-			{
-				user_name: debugStreamer,
-				viewer_count: 888888,
-				profile_picture: "https://octo.party/logo.svg",
-			},
-		];
-	};
 
 	const isExpand = ref<boolean>(false);
 	const expandedEmbed = ref<string>("");
@@ -582,41 +561,36 @@
 	};
 
 	const isDragging = ref<boolean>(false);
+	
+	const debugStreamer: string = 'LinusTech'
+
+	const debugRemoveStreamer = () => {
+		console.log("Removing streamer");
+		activeStreamers.value = activeStreamers.value.filter(
+			(streamer) => streamer.user_name !== debugStreamer
+		);
+	};
+
+	const debugAddStreamer = () => {
+		console.log("Adding streamer");
+
+		activeStreamers.value = [
+			...activeStreamers.value,
+			{
+				user_name: debugStreamer,
+				viewer_count: 888888,
+				profile_picture: "https://octo.party/logo.svg",
+			},
+		];
+	};
 </script>
 
 <template>
-	<v-expand-transition>
-		<div
-			id="debug"
-			style="
-				position: fixed;
-				bottom: 90px;
-				right: 460px;
-				width: 300px;
-				z-index: 99999;
-			"
-			v-if="SHOW_DEBUG_MENU"
-		>
-			<v-card>
-				<v-row class="d-flex justify-space-between align-center ma-0">
-					<v-col cols="12" class="pa-5 pb-2 pt-2">
-						<v-list-item class="pa-0">
-							<h5 style="color: orange">Debug Menu</h5>
-						</v-list-item>
-						<v-list-item class="pa-4" @click="debugAddStreamer">
-							Add Streamer
-						</v-list-item>
-						<v-list-item class="pa-4" @click="debugRemoveStreamer">
-							Remove Streamer
-						</v-list-item>
-						<v-list-item class="pa-4" @click="checkStreamerStatus()">
-							Refresh List
-						</v-list-item>
-					</v-col>
-				</v-row>
-			</v-card>
-		</div>
-	</v-expand-transition>
+		<DebugMenu
+		:SHOW_DEBUG_MENU="SHOW_DEBUG_MENU"
+		@debugAddStreamer="debugAddStreamer"
+		@debugRemoveStreamer="debugRemoveStreamer"
+		/>
 	<main
 		@mousemove="handleMouseMove"
 		@mouseleave="handleMouseLeave"
