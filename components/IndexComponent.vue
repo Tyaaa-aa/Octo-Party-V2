@@ -109,7 +109,7 @@
 			(streamer) => streamer.user_name.toUpperCase() !== item.toUpperCase()
 		);
 		inactiveStreamers.value = inactiveStreamers.value.filter(
-			(streamer) => streamer.toUpperCase() !== item.toUpperCase()
+			(streamer) => streamer.user_name.toUpperCase() !== item.toUpperCase()
 		);
 	};
 
@@ -123,7 +123,7 @@
 		}, 2000);
 	};
 
-	interface OnlineData {
+	interface StreamerStatus {
 		user_name: string;
 		viewer_count: number;
 		profile_picture: string;
@@ -152,8 +152,8 @@
 	const errorMsg = ref<string>("");
 	const isError = ref<boolean>(false);
 
-	const activeStreamers = ref<OnlineData[]>([]);
-	const inactiveStreamers = ref<string[]>(octoStore.octoData);
+	const activeStreamers = ref<StreamerStatus[]>([]);
+	const inactiveStreamers = ref<StreamerStatus[]>([]);
 
 	const addAllStreams = () => {
 		activeStreamers.value.forEach((streamer) => {
@@ -168,7 +168,7 @@
 		try {
 			loading.value = true;
 			// throw new Error("Test error")
-			const response = await $fetch(`/api/twitch-streamer-status`, {
+			const response = await $fetch(`/api/twitch-streamer-status-v2`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -201,10 +201,7 @@
 				return;
 			}
 
-			const { offline, online } = response.data as {
-				offline: string[];
-				online: OnlineData[];
-			};
+			const { offline, online } = response.data
 
 			// console.log(offline)
 			// console.log(online)
@@ -803,6 +800,7 @@
 								<h4 v-if="inactiveStreamers.length >= 1">
 									Not Streaming ({{ inactiveStreamers.length }})
 								</h4>
+								<br>
 								<v-list-item
 									v-for="(nonActStreamer, index) in inactiveStreamers"
 									:key="index"
@@ -813,11 +811,12 @@
 										variant="plain"
 										icon="mdi-delete"
 										color="red-accent-2"
-										@click="(event: MouseEvent) => removeShareItem(nonActStreamer, event)"
+										@click="(event: MouseEvent) => removeShareItem(nonActStreamer.user_name, event)"
 										v-auto-animate
 									>
 									</v-btn>
-									{{ nonActStreamer }}
+									<img :src="nonActStreamer.profile_picture" alt="Profile picture" class="profile_picture">
+									{{ nonActStreamer.user_name }}
 								</v-list-item>
 								<div
 									v-if="octoStore.octoData.length === 0"
