@@ -701,69 +701,19 @@
 					</v-row>
 					<v-row no-gutters class="pl-5 pr-5 favs-list-container">
 						<v-col cols="12">
-							<v-list>
-								<h4 v-if="activeStreamers.length >= 1">
-									Streaming ({{ activeStreamers.length }})
-								</h4>
-								<v-list-item
-									v-for="(actStreamer, index) in activeStreamers"
-									:key="index"
-									@click="addEmbed(actStreamer.user_name)"
-									class="streaming_row"
-								>
-									<v-btn
-										class="deletebtn"
-										:class="{ 'deletebtn-hide': !editMode }"
-										variant="plain"
-										icon="mdi-delete"
-										color="red-accent-2"
-										@click="(event: MouseEvent) => removeShareItem(actStreamer.user_name, event)"
-										v-auto-animate
-									>
-									</v-btn>
-									<img :src="actStreamer.profile_picture" alt="Profile picture" class="profile_picture">
-									<span class="active_streamer">{{
-										actStreamer.user_name
-									}}</span>
-									<span class="streamer_views">{{
-										actStreamer.viewer_count
-									}}</span>
-								</v-list-item>
-								<v-divider
-									class="ma-5"
-									v-if="activeStreamers.length >= 1"
-								></v-divider>
-								<h4 v-if="inactiveStreamers.length >= 1">
-									Not Streaming ({{ inactiveStreamers.length }})
-								</h4>
-								<v-list-item
-									v-for="(nonActStreamer, index) in inactiveStreamers"
-									:key="index"
-									class="non-streaming_row"
-								>
-									<v-btn
-										class="deletebtn"
-										:class="{ 'deletebtn-hide': !editMode }"
-										variant="plain"
-										icon="mdi-delete"
-										color="red-accent-2"
-										@click="(event: MouseEvent) => removeShareItem(nonActStreamer.user_name, event)"
-										v-auto-animate
-									>
-									</v-btn>
-									<img :src="nonActStreamer.profile_picture" alt="Profile picture" class="profile_picture">
-									{{ nonActStreamer.user_name }}
-								</v-list-item>
-								<div
-									v-if="octoStore.octoData.length === 0"
-									class="mt-3 text-center"
-									style="display: block"
-								>
-									<h2>Your list is empty :(</h2>
-									<br />
-									<!-- <span>You can add streamers by searching for them</span> -->
-								</div>
-							</v-list>
+							<OnlineStreamersList
+								:activeStreamers="activeStreamers"
+								:removeShareItem="removeShareItem"
+								:addEmbed="addEmbed"
+								:editMode="editMode"
+
+							/>
+							<OfflineStreamersList
+								:inactiveStreamers="inactiveStreamers"
+								:removeShareItem="removeShareItem"
+								:octoStore="octoStore"
+								:editMode="editMode"
+							/>
 						</v-col>
 						<CreditsSection />
 					</v-row>
