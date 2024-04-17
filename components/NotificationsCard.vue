@@ -8,7 +8,7 @@
 	const props = defineProps<{
 		notiExpand: Boolean;
 		ENABLE_NOTIFICATIONS: Boolean;
-		activeNotifications: Notification;
+		activeNotifications: Notification[];
 		addEmbed: (streamer_name: string) => void;
 	}>();
 </script>

@@ -4,13 +4,14 @@
 		view_count: string;
 		timestamp: Date;
 	}
+	type ActionType = NonNullable<"toggle">;
 	const props = defineProps<{
 		listExpand: Boolean;
 		isFullscreen: Boolean;
 		notiExpand: Boolean;
 		ENABLE_NOTIFICATIONS: Boolean;
-		activeNotifications: Notification;
-		handleFavsMenu: (action: string) => void;
+		activeNotifications: Notification[];
+		handleFavsMenu: (action: ActionType) => void;
 		toggleFullscreen: () => void;
 		toggleNoti: () => void;
 	}>();
