@@ -1134,22 +1134,6 @@
 		/* outline: 2px solid red; */
 	}
 
-	.share-card {
-		width: 400px;
-	}
-
-	.qrcode {
-		width: 100% !important;
-		height: 100% !important;
-		aspect-ratio: 1 / 1 !important;
-		/* border: 2px solid red; */
-	}
-
-	.copy-url {
-		/* border: 2px solid blue; */
-		width: 100%;
-	}
-
 	.embeds-container {
 		width: 100%;
 		display: grid;

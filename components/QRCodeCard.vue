@@ -1,12 +1,12 @@
 <script setup lang="ts">
-    import QrcodeVue, { type Level, type RenderAs } from "qrcode.vue";
-	
-    const props = defineProps<{
-        url: String,
-        QRvalue: String,
-        listExpand: Boolean,
-    }>();
-    
+	import QrcodeVue, { type Level, type RenderAs } from "qrcode.vue";
+
+	const props = defineProps<{
+		url: String;
+		QRvalue: String;
+		listExpand: Boolean;
+	}>();
+
 	const level = ref<Level>("M");
 	const renderAs = ref<RenderAs>("canvas");
 </script>
@@ -37,3 +37,19 @@
 		</v-card>
 	</v-expand-transition>
 </template>
+<style>
+	.share-card {
+		width: 400px;
+	}
+	.qrcode {
+		width: 100% !important;
+		height: 100% !important;
+		aspect-ratio: 1 / 1 !important;
+		/* border: 2px solid red; */
+	}
+
+	.copy-url {
+		/* border: 2px solid blue; */
+		width: 100%;
+	}
+</style>
