@@ -54,11 +54,7 @@
 			(notification) => notification.streamer_name !== streamer_name
 		);
 	};
-	const toggleNoti = () => {
-		console.log("Toggling notifications");
-		
-		notiExpand.value = !notiExpand.value;
-	};
+	const toggleNoti = () => notiExpand.value = !notiExpand.value
 
 	type ActionType = NonNullable<"toggle">;
 	const handleFavsMenu = (action: ActionType) => {
