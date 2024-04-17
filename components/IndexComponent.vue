@@ -800,10 +800,10 @@
 								<h4 v-if="inactiveStreamers.length >= 1">
 									Not Streaming ({{ inactiveStreamers.length }})
 								</h4>
-								<br>
 								<v-list-item
 									v-for="(nonActStreamer, index) in inactiveStreamers"
 									:key="index"
+									class="non-streaming_row"
 								>
 									<v-btn
 										class="deletebtn"

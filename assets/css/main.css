@@ -26,9 +26,9 @@
 	font-size: 1.25em;
 }
 
-.streaming_row .v-list-item__content {
+.streaming_row .v-list-item__content,
+.non-streaming_row .v-list-item__content  {
 	display: flex !important;
-	justify-content: space-between !important;
 	align-items: center !important;
 	position: relative;
 }
