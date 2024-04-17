@@ -820,53 +820,17 @@
 					</v-row>
 				</v-card>
 			</v-expand-transition>
-			<!-- Menu Button -->
-			<div class="btns-box">
-				<v-btn
-					:icon="!listExpand ? 'mdi-menu' : 'mdi-close'"
-					:class="!listExpand ? 'main-btn' : 'main-btn main-btn-close'"
-					variant="elevated"
-					color="deep-purple-darken-1"
-					@click="handleFavsMenu('toggle')"
-				>
-				</v-btn>
-				<v-btn
-					:icon="!isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'"
-					:class="ENABLE_NOTIFICATIONS ? 'fullscreen-btn' : 'fullscreen-btn fullscreen-btn-right'"
-					variant="plain"
-					color="grey-lighten-5"
-					@click="toggleFullscreen"
-				>
-				</v-btn>
-				<div>
-					<v-expand-transition>
-						<v-btn
-							:icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
-							:variant="!notiExpand ? 'plain' : 'elevated'"
-							:color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
-							@click="notiExpand = !notiExpand"
-							:class="
-								!notiExpand
-									? 'toggleNotiBtn main-btn'
-									: 'toggleNotiBtn main-btn main-btn-close'
-							"
-							v-if="ENABLE_NOTIFICATIONS"
-						>
-						</v-btn>
-					</v-expand-transition>
-					<v-slide-y-transition>
-						<span
-							class="notiCount"
-							v-if="
-								ENABLE_NOTIFICATIONS &&
-								!notiExpand &&
-								activeNotifications.length > 0
-							"
-							>{{ activeNotifications.length }}
-						</span>
-					</v-slide-y-transition>
-				</div>
-			</div>
+			
+			<ButtonsOverlay 
+			:listExpand="listExpand"
+			:isFullscreen="isFullscreen"
+			:notiExpand="notiExpand"
+			:ENABLE_NOTIFICATIONS="ENABLE_NOTIFICATIONS"
+			:activeNotifications="activeNotifications"
+			:toggleFullscreen="toggleFullscreen"
+			:handleFavsMenu="handleFavsMenu"
+			:toggleNoti="toggleNoti"
+			/>
 			
 			<NotificationsCard
 			:notiExpand="notiExpand"
@@ -1002,11 +966,6 @@
 	.show {
 		opacity: 1;
 		pointer-events: auto;
-	}
-
-	.btns-box {
-		display: flex;
-		gap: 10px;
 	}
 
 	.favs-menu {
@@ -1173,22 +1132,6 @@
 		border: 5px solid orange;
 	}
 
-	.notiCount {
-		position: fixed;
-		top: 15px;
-		right: 40px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		border-radius: 50%;
-		width: 18px;
-		height: 18px;
-		font-size: 0.8em;
-		padding: 2px;
-		pointer-events: none;
-		z-index: 999;
-		background-color: #ef5350;
-	}
 	.embeds-container-expand {
 		display: flex;
 		position: absolute;
