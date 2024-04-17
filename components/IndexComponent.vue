@@ -23,7 +23,6 @@
 	const listExpand = ref<boolean>(false);
 	const notiExpand = ref<boolean>(false);
 
-	const ENABLE_DEBUG = ref<boolean>(false);
 	const SHOW_DEBUG_MENU = ref<boolean>(false);
 	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
 	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
@@ -632,46 +631,14 @@
 				@copySharedLink="copySharedLink"
 			/>
 			<!-- Settings Card -->
-			<v-expand-transition>
-				<v-card v-if="listExpand" variant="elevated" class="share-card">
-					<v-row class="d-flex justify-space-between align-center ma-0">
-						<v-col cols="12" class="pa-5 pb-2 pt-2">
-							<v-list-item class="pa-0" v-if="ENABLE_DEBUG">
-								<v-switch
-									label="Enable Debug Mode"
-									v-model="SHOW_DEBUG_MENU"
-									inset
-									color="deep-purple-darken-1"
-								></v-switch>
-							</v-list-item>
-							<v-list-item class="pa-0">
-								<v-switch
-									label="Show Notifications"
-									v-model="ENABLE_NOTIFICATIONS"
-									inset
-									color="deep-purple-darken-1"
-								></v-switch>
-							</v-list-item>
-							<v-list-item class="pa-0">
-								<v-switch
-									label="Auto Remove Offline Streams"
-									v-model="ENABLE_AUTO_REMOVE_STREAM"
-									inset
-									color="deep-purple-darken-1"
-								></v-switch>
-							</v-list-item>
-							<v-list-item class="pa-0">
-								<v-switch
-									label="Remember Last Layout"
-									v-model="ENABLE_REMEMBER_LAST_LAYOUT"
-									inset
-									color="deep-purple-darken-1"
-								></v-switch>
-							</v-list-item>
-						</v-col>
-					</v-row>
-				</v-card>
-			</v-expand-transition>
+			<SettingsCard
+				:listExpand="listExpand"
+				:SHOW_DEBUG_MENU="SHOW_DEBUG_MENU"
+				@showDebugMenu="SHOW_DEBUG_MENU = $event"
+				@enableNotifications="ENABLE_NOTIFICATIONS =  $event"
+				@enableAutoRemoveStream="ENABLE_AUTO_REMOVE_STREAM =  $event"
+				@enableRememberLastLayout="ENABLE_REMEMBER_LAST_LAYOUT =  $event"
+			/>
 			<!-- Main Menu Card -->
 			<v-expand-transition>
 				<v-card
