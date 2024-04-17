@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 	import { useTheme } from "vuetify";
-	import QrcodeVue, { type Level, type RenderAs } from "qrcode.vue";
 	import { useMouse } from "@vueuse/core";
 	// import { VueDraggableNext } from 'vue-draggable-next'
 	import draggable from "vuedraggable";
@@ -225,8 +224,6 @@
 	};
 
 	const QRvalue = ref("");
-	const level = ref<Level>("M");
-	const renderAs = ref<RenderAs>("canvas");
 	const showShare = ref(false);
 
 	const isSuccess = ref(false);
@@ -607,31 +604,12 @@
 			@mouseleave="handleMouseLeave"
 		>
 			<!-- QR Code Card -->
-			<v-expand-transition>
-				<v-card v-if="listExpand && url" variant="elevated" class="share-card">
-					<v-row class="d-flex justify-space-between align-center ma-0">
-						<v-col cols="5" class="pa-5">
-							<qrcode-vue
-								class="qrcode"
-								:value="QRvalue"
-								:level="level"
-								:render-as="renderAs"
-							/>
-						</v-col>
-						<v-col cols="7" class="pa-5 pl-0">
-							<v-text-field
-								:value="url"
-								variant="solo-filled"
-								append-inner-icon="mdi-content-copy"
-								@click:append-inner="copySharedLink"
-								@keydown.enter="copySharedLink"
-								hide-details
-								class="copy-url"
-							></v-text-field>
-						</v-col>
-					</v-row>
-				</v-card>
-			</v-expand-transition>
+			<QRCodeCard
+				:listExpand="listExpand"
+				:url="url"
+				:QRvalue="QRvalue"
+				@copySharedLink="copySharedLink"
+			/>
 			<!-- Settings Card -->
 			<v-expand-transition>
 				<v-card v-if="listExpand" variant="elevated" class="share-card">
