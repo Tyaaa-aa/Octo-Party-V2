@@ -82,11 +82,11 @@ async function getOnlineStreamers(streamers: string[], headers: Record<string, s
 
 async function getStreamerData(streamers: string[], clientID: string, clientSecret: string) {
   if (!streamers || streamers.length === 0) return { error: 'No streamers provided' };
-  
+
   if (!Array.isArray(streamers)) {
     streamers = JSON.parse(streamers);
   }
-  
+
   const accessToken = await getAccessToken(clientID, clientSecret);
 
   if (!accessToken) {
@@ -104,32 +104,39 @@ async function getStreamerData(streamers: string[], clientID: string, clientSecr
   const profileInfo = await getStreamerProfileInfo(streamers, HEADERS);
 
   if (!Array.isArray(onlineStreamers)) return { error: 'An error occured fetching online streamers please try again' };
-  if (!Array.isArray(profileInfo)) return { error: 'An error occured fetching profile info please try again' }; 
-  
+  if (!Array.isArray(profileInfo)) return { error: 'An error occured fetching profile info please try again' };
+
   for (const stream of onlineStreamers) {
-      const profile = profileInfo.find((profile) => profile.id === stream.user_id);
-      if (profile) {
-        stream.profile_image_url = profile.profile_image_url;
-      }
+    const profile = profileInfo
+      .find((profile) => profile.id === stream.user_id);
+    if (profile) {
+      stream.profile_image_url = profile.profile_image_url;
+    }
   }
 
-  const online = onlineStreamers.map((stream) => {
-    return {
-      user_name: stream.user_name,
-      viewer_count: stream.viewer_count,
-      profile_picture: stream.profile_image_url,
-    };
-  })
+  const online = onlineStreamers
+    .map((stream) => {
+      return {
+        user_name: stream.user_name,
+        viewer_count: stream.viewer_count,
+        profile_picture: stream.profile_image_url,
+      };
+    })
+    .sort((a, b) => a.user_name
+      .localeCompare(b.user_name));
 
-  const offline = streamers.filter((streamer) => {
-    return !onlineStreamers.some((stream) => stream.user_name === streamer)
-  }).map((streamer) => {
-    return {
-      user_name: streamer,
-      viewer_count: 0,
-      profile_picture: 'null',
-    }
-  }); 
+  const offline = profileInfo
+    .filter((profile) => !onlineStreamers
+      .some((stream) => stream.user_id === profile.id))
+    .map((profile) => {
+      return {
+        user_name: profile.display_name,
+        viewer_count: 0,
+        profile_picture: profile.profile_image_url,
+      };
+    })
+    .sort((a, b) => a.user_name
+      .localeCompare(b.user_name));
 
   const data = {
     online: online,
