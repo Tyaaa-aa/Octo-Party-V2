@@ -40,6 +40,27 @@
 	}
 	const activeNotifications = ref<Notification[]>([]);
 
+	const clearAllNotifications = () => {
+		activeNotifications.value = [];
+		notiExpand.value = false;
+	};
+	const addEmbedFromNotification = (streamer_name: string) => {
+		addEmbed(streamer_name);
+		activeNotifications.value = activeNotifications.value.filter(
+			(notification) => notification.streamer_name !== streamer_name
+		);
+	};
+	const removeNotification = (streamer_name: string) => {
+		activeNotifications.value = activeNotifications.value.filter(
+			(notification) => notification.streamer_name !== streamer_name
+		);
+	};
+	const toggleNoti = () => {
+		console.log("Toggling notifications");
+		
+		notiExpand.value = !notiExpand.value;
+	};
+
 	type ActionType = NonNullable<"toggle">;
 	const handleFavsMenu = (action: ActionType) => {
 		if (action === "toggle") {
@@ -846,100 +867,17 @@
 					</v-slide-y-transition>
 				</div>
 			</div>
-			<!-- Notifications Card -->
-			<v-expand-transition>
-				<v-card
-					v-if="notiExpand && ENABLE_NOTIFICATIONS"
-					variant="elevated"
-					:class="
-						activeNotifications.length === 0
-							? 'notifications no-notifications'
-							: 'notifications'
-					"
-				>
-					<v-row class="d-flex justify-space-between align-center ma-0">
-						<v-col cols="12" class="pa-5 pb-2 pt-0">
-							<v-list-item class="pa-0 pt-2">
-								<h5>
-									<span v-if="activeNotifications.length === 0">
-										No notifications yet
-									</span>
-									<span v-else>
-										Notifications ({{ activeNotifications.length }})
-									</span>
-								</h5>
-								<v-btn
-									variant="text"
-									text="Clear All"
-									color="deep-purple-darken-1"
-									@click="
-										activeNotifications = [];
-										notiExpand = false;
-									"
-									v-if="activeNotifications.length > 0"
-								></v-btn>
-							</v-list-item>
-						</v-col>
-						<v-col
-							cols="12"
-							class="pa-3 pt-2 pb-1 notifications-list"
-							style="max-height: 200px; overflow: auto"
-							v-if="activeNotifications.length > 0"
-						>
-							<v-list-item
-								class="pa-2 pt-1"
-								v-for="notificationItem in activeNotifications"
-								:key="notificationItem.streamer_name"
-							>
-								<p class="notification-item">
-									<span
-										class="notification-time"
-										:title="
-											notificationItem.timestamp.toLocaleTimeString() +
-											' - ' +
-											notificationItem.timestamp.toDateString()
-										"
-										>{{
-											notificationItem.timestamp.toLocaleTimeString([], {
-												hour: "2-digit",
-												minute: "2-digit",
-												hour12: true,
-											})
-										}}</span
-									>{{ notificationItem.streamer_name }} is live!
-								</p>
-								<div>
-									<v-btn
-										text="Add"
-										color="deep-purple-darken-1"
-										class="ma-1"
-										@click="
-											addEmbed(notificationItem.streamer_name);
-											activeNotifications = activeNotifications.filter(
-												(notification) =>
-													notification.streamer_name !==
-													notificationItem.streamer_name
-											);
-										"
-									></v-btn>
-									<v-btn
-										variant="plain"
-										icon="mdi-close"
-										color="grey-lighten-1"
-										@click="
-											activeNotifications = activeNotifications.filter(
-												(notification) =>
-													notification.streamer_name !==
-													notificationItem.streamer_name
-											)
-										"
-									></v-btn>
-								</div>
-							</v-list-item>
-						</v-col>
-					</v-row>
-				</v-card>
-			</v-expand-transition>
+			
+			<NotificationsCard
+			:notiExpand="notiExpand"
+			:ENABLE_NOTIFICATIONS="ENABLE_NOTIFICATIONS"
+			:activeNotifications="activeNotifications"
+			:addEmbed="addEmbed"
+			@clearAllNotifications="clearAllNotifications"
+			@addEmbedFromNoti="addEmbedFromNotification"
+			@removeNoti="removeNotification"
+			/>
+			
 		</div>
 		<!-- Embedded Streams -->
 		<draggable
@@ -1235,38 +1173,6 @@
 		border: 5px solid orange;
 	}
 
-	.notifications {
-		position: fixed;
-		top: 70px;
-		right: 40px;
-		width: 450px;
-		max-height: 250px;
-		overflow-y: auto;
-		transition: all 0.3s ease-in-out;
-	}
-	.no-notifications {
-		width: 170px;
-	}
-	.no-notifications * {
-		text-align: center !important;
-		width: 100%;
-	}
-
-	.toggleNotiBtn {
-		position: fixed;
-		top: 10px;
-		right: 20px;
-	}
-	.fullscreen-btn {
-		position: fixed;
-		top: 10px;
-		right: 70px;
-		transition: right 0.3s ease-in-out;
-	}
-	.fullscreen-btn-right {
-		right: 20px;
-	}
-
 	.notiCount {
 		position: fixed;
 		top: 15px;
@@ -1283,22 +1189,6 @@
 		z-index: 999;
 		background-color: #ef5350;
 	}
-
-	.notifications p {
-		font-size: 0.95em;
-		max-width: 65%;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-	}
-
-	.notification-time {
-		font-size: 0.8em;
-		margin-right: 10px;
-		/* font-style: italic; */
-		color: #8a8a8a;
-	}
-
 	.embeds-container-expand {
 		display: flex;
 		position: absolute;
@@ -1383,20 +1273,5 @@
 		}
 	}
 
-	@media (max-width: 600px) {
-		.notifications {
-			right: 50%;
-			max-width: 90vw;
-			transform: translateX(50%);
-		}
-		.notification-item {
-			display: flex;
-			align-items: center;
-			max-width: 70%;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			margin-right: 5px;
-		}
-	}
+	
 </style>
