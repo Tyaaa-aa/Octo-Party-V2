@@ -26,11 +26,6 @@
 	// const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
 	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
 
-	interface Notification {
-		streamer_name: string;
-		view_count: string;
-		timestamp: Date;
-	}
 	const activeNotifications = ref<Notification[]>([]);
 
 	const clearAllNotifications = () => {
@@ -50,8 +45,7 @@
 	};
 	const toggleNoti = () => notiExpand.value = !notiExpand.value
 
-	type ActionType = NonNullable<"toggle">;
-	const handleFavsMenu = (action: ActionType) => {
+	const handleFavsMenu = (action: Toggle) => {
 		if (action === "toggle") {
 			listExpand.value = !listExpand.value;
 			return;
@@ -131,12 +125,6 @@
 			loading.value = false;
 		}, 2000);
 	};
-
-	interface StreamerStatus {
-		user_name: string;
-		viewer_count: number;
-		profile_picture: string;
-	}
 
 	const embedsListStore = useEmbedsListStore();
 
@@ -504,7 +492,7 @@
 				streamer_name: newItem.user_name,
 				view_count: newItem.viewer_count.toString(),
 				timestamp: new Date(),
-			};
+			} as Notification;
 			activeNotifications.value = [newNoti, ...activeNotifications.value];
 			
 			if (notiExpand.value) return;

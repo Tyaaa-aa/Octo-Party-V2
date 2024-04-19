@@ -1,7 +1,3 @@
-interface embedsListState {
-    embedsList: string[];
-}
-
 export default defineStore({
     id: 'embedsList',
     state: (): embedsListState => ({

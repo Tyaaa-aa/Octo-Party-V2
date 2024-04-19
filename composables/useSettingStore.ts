@@ -1,16 +1,3 @@
-interface SettingStoreState {
-  Notifications: boolean,
-  AutoRemove: boolean,
-  RememberLastLayout: boolean,
-  LastLayout: {
-    expanded: {
-      status: boolean,
-      streamer: string,
-    },
-    streamerList: string[],
-  },
-}
-
 export default defineStore({
   id: 'settingStore',
   state: (): SettingStoreState => ({

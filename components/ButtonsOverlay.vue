@@ -1,17 +1,12 @@
 <script setup lang="ts">
-	interface Notification {
-		streamer_name: string;
-		view_count: string;
-		timestamp: Date;
-	}
-	type ActionType = NonNullable<"toggle">;
+    import type { Notification } from "@/types/index";
 	const props = defineProps<{
 		listExpand: Boolean;
 		isFullscreen: Boolean;
 		notiExpand: Boolean;
 		ENABLE_NOTIFICATIONS: Boolean;
 		activeNotifications: Notification[];
-		handleFavsMenu: (action: ActionType) => void;
+		handleFavsMenu: (action: Toggle) => void;
 		toggleFullscreen: () => void;
 		toggleNoti: () => void;
 	}>();

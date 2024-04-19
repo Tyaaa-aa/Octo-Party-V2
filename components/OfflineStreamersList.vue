@@ -1,9 +1,5 @@
 <script lang="ts" setup>
-	interface StreamerStatus {
-		user_name: string;
-		viewer_count: number;
-		profile_picture: string;
-	}
+	import type { StreamerStatus } from "@/types/index.d.ts";
 	const props = defineProps<{
 		inactiveStreamers: Array<StreamerStatus>;
 		editMode: boolean;

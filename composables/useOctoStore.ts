@@ -1,7 +1,3 @@
-interface OctoStoreState {
-  octoData: string[],
-}
-
 export default defineStore({
   id: 'octoStore',
   state: (): OctoStoreState => ({

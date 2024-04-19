@@ -1,10 +1,5 @@
 <script setup lang="ts">
-	interface Notification {
-		streamer_name: string;
-		view_count: string;
-		timestamp: Date;
-	}
-
+    import type { Notification } from "@/types/index";
 	const props = defineProps<{
 		notiExpand: Boolean;
 		ENABLE_NOTIFICATIONS: Boolean;

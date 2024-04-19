@@ -22,28 +22,6 @@ async function getAccessToken(clientID: string, clientSecret: string): Promise<s
   return tokenData.access_token || null;
 }
 
-interface TwitchStreamResponse {
-  data: {
-    user_id: string;
-    user_name: string;
-    viewer_count: number;
-    profile_image_url: string;
-  }[];
-}
-
-interface TwitchProfileInfoResponse {
-  data: {
-    id: string;
-    login: string;
-    display_name: string;
-    profile_image_url: string;
-  }[];
-}
-
-interface TwitchErrorResponse {
-  error: string;
-}
-
 async function getStreamerProfileInfo(streamers: string[], headers: Record<string, string>) {
   const URL = `https://api.twitch.tv/helix/users?login=${streamers.join('&login=')}`;
 
