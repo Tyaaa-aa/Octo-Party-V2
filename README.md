@@ -169,3 +169,5 @@ This project is licensed under the [GNU General Public License v3.0](https://www
 
 
 For any inquiries or feedback, feel free to reach out to us at [contact@octo.party](mailto:contact@octo.party).
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q6X4D5F)
