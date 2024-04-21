@@ -73,26 +73,28 @@ async function getStreamerData(streamers: string[], clientID: string, clientSecr
   const online = onlineStreamers
     .map((stream) => {
       return {
+        user_login: stream.user_login,
         user_name: stream.user_name,
         viewer_count: stream.viewer_count,
         profile_picture: stream.profile_image_url,
       };
     })
     .sort((a, b) => a.user_name
-      .localeCompare(b.user_name));
+      .localeCompare(b.user_name)) as StreamerStatus[];
 
   const offline = profileInfo
     .filter((profile) => !onlineStreamers
       .some((stream) => stream.user_id === profile.id))
     .map((profile) => {
       return {
+        user_login: profile.login,
         user_name: profile.display_name,
         viewer_count: 0,
         profile_picture: profile.profile_image_url,
       };
     })
     .sort((a, b) => a.user_name
-      .localeCompare(b.user_name));
+      .localeCompare(b.user_name)) as StreamerStatus[];
 
   const data = {
     online: online,

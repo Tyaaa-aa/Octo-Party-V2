@@ -24,7 +24,7 @@
 				variant="plain"
 				icon="mdi-delete"
 				color="red-accent-2"
-				@click="(event: MouseEvent) => removeShareItem(nonActStreamer.user_name, event)"
+				@click="(event: MouseEvent) => removeShareItem(nonActStreamer.user_login, event)"
 				v-auto-animate
 			>
 			</v-btn>
@@ -34,6 +34,12 @@
 				class="profile_picture"
 			/>
 			{{ nonActStreamer.user_name }}
+			<span
+				v-if="isNotEnglish(nonActStreamer.user_name)"
+				style="margin-left: 5px"
+			>
+				({{ nonActStreamer.user_login }})
+			</span>
 		</v-list-item>
 		<div
 			v-if="octoStore.octoData.length === 0"

@@ -109,10 +109,10 @@
 		}
 		octoStore.removeMatchingStringFromOctoData(item);
 		activeStreamers.value = activeStreamers.value.filter(
-			(streamer) => streamer.user_name.toUpperCase() !== item.toUpperCase()
+			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
 		);
 		inactiveStreamers.value = inactiveStreamers.value.filter(
-			(streamer) => streamer.user_name.toUpperCase() !== item.toUpperCase()
+			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
 		);
 	};
 
@@ -487,7 +487,7 @@
 		if(isSuccess.value && successMsg.value === "Streamer added to list!") return;
 
 		if (newItem && ENABLE_NOTIFICATIONS.value && oldvalue.length > 0) {
-			console.log("New item found:", newItem);
+			// console.log("New item found:", newItem);
 			const newNoti = {
 				streamer_name: newItem.user_name,
 				view_count: newItem.viewer_count.toString(),
@@ -572,6 +572,7 @@
 		activeStreamers.value = [
 			...activeStreamers.value,
 			{
+				user_login: debugStreamer,
 				user_name: debugStreamer,
 				viewer_count: 888888,
 				profile_picture: "https://octo.party/logo.svg",

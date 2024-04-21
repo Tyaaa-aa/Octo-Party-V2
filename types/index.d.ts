@@ -6,6 +6,7 @@ declare global {
         data: {
             user_id: string;
             user_name: string;
+            user_login: string;
             viewer_count: number;
             profile_image_url: string;
         }[];
@@ -48,6 +49,7 @@ declare global {
     
     // Streamer status types
 	interface StreamerStatus {
+        user_login: string;
 		user_name: string;
 		viewer_count: number;
 		profile_picture: string;

@@ -25,8 +25,9 @@ async function checkStreamerExistence(streamerName: string, clientID: string, cl
         }
 
         const userData = await userResponse.json();
-        const userName = userData.data[0].display_name
-        // console.log(userData.data[0].display_name)
+        // console.log(userData)
+        const userName = userData.data[0].login
+        // console.log(userData.data[0].login)
         return userName // Return true if the user exists
     } catch (error) {
         console.error('Error:', error);

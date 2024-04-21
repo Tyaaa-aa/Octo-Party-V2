@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import type { StreamerStatus } from "@/types/index.d.ts";
+	import type { StreamerStatus } from "@/types/index.d.ts";
 	const props = defineProps<{
 		activeStreamers: Array<StreamerStatus>;
 		editMode: boolean;
@@ -16,7 +16,7 @@
 		<v-list-item
 			v-for="(actStreamer, index) in activeStreamers"
 			:key="index"
-			@click="addEmbed(actStreamer.user_name)"
+			@click="addEmbed(actStreamer.user_login)"
 			class="streaming_row"
 		>
 			<v-btn
@@ -25,7 +25,7 @@
 				variant="plain"
 				icon="mdi-delete"
 				color="red-accent-2"
-				@click="(event: MouseEvent) => removeShareItem(actStreamer.user_name, event)"
+				@click="(event: MouseEvent) => removeShareItem(actStreamer.user_login, event)"
 				v-auto-animate
 			>
 			</v-btn>
@@ -34,7 +34,12 @@
 				alt="Profile picture"
 				class="profile_picture"
 			/>
-			<span class="active_streamer">{{ actStreamer.user_name }}</span>
+			<span class="active_streamer">
+				{{ actStreamer.user_name }}
+				<span v-if="isNotEnglish(actStreamer.user_name)">
+        ({{ actStreamer.user_login }})
+        </span>
+			</span>
 			<span class="streamer_views">{{ actStreamer.viewer_count }}</span>
 		</v-list-item>
 		<v-divider class="ma-3" v-if="activeStreamers.length >= 1"></v-divider>
