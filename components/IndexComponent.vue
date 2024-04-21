@@ -394,7 +394,7 @@
 
 		setTimeout(() => {
 			loading.value = false;
-		}, 2000);
+		}, 3000);
 
 		const updateTimer = setInterval(() => {
 			checkStreamerStatus();
@@ -690,6 +690,14 @@
 					</v-row>
 					<v-row no-gutters class="pl-5 pr-5 favs-list-container">
 						<v-col cols="12">
+							<SkeletonStreamerList
+							v-if="
+							octoStore.octoData.length > 0
+							&&
+							(activeStreamers.length === 0
+							||
+							inactiveStreamers.length === 0)
+							"/>
 							<OnlineStreamersList
 								:activeStreamers="activeStreamers"
 								:removeShareItem="removeShareItem"
