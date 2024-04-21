@@ -1,8 +1,10 @@
+import getTwitchAccessToken from '../utils/getTwitchAccessToken';
+
 async function checkStreamerExistence(streamerName: string, clientID: string, clientSecret: string): Promise<boolean> {
     const encodedStreamerName = encodeURIComponent(streamerName);
     const userURL = `https://api.twitch.tv/helix/users?login=${encodedStreamerName}`;
 
-    const accessToken = await getAccessToken(clientID, clientSecret);
+    const accessToken = await getTwitchAccessToken(clientID, clientSecret);
 
     if (!accessToken) {
         return false; // Error handling for failed access token retrieval
@@ -31,38 +33,6 @@ async function checkStreamerExistence(streamerName: string, clientID: string, cl
         return false; // Error handling for network issues or unexpected errors
     }
 }
-
-async function getAccessToken(clientID: string, clientSecret: string): Promise<string | null> {
-    const tokenURL = 'https://id.twitch.tv/oauth2/token';
-    const tokenParams = new URLSearchParams({
-        'client_id': clientID,
-        'client_secret': clientSecret,
-        'grant_type': 'client_credentials'
-    });
-
-    try {
-        const tokenResponse = await fetch(tokenURL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: tokenParams
-        });
-
-        if (!tokenResponse.ok) {
-            return null; // Error handling for failed request
-        }
-
-        const tokenData = await tokenResponse.json();
-        return tokenData.access_token || null;
-    } catch (error) {
-        console.error('Error:', error);
-        return null; // Error handling for network issues or unexpected errors
-    }
-}
-
-
-
 
 // Your Twitch API credentials
 const clientID = process.env.TWITCH_CLIENTID ?? ''

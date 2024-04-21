@@ -1,26 +1,4 @@
-async function getAccessToken(clientID: string, clientSecret: string): Promise<string | null> {
-  const tokenURL = 'https://id.twitch.tv/oauth2/token';
-  const tokenParams = new URLSearchParams({
-    client_id: clientID,
-    client_secret: clientSecret,
-    grant_type: 'client_credentials'
-  });
-
-  const tokenResponse = await fetch(tokenURL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: tokenParams
-  });
-
-  if (!tokenResponse.ok) {
-    return null; // Error handling for failed request
-  }
-
-  const tokenData = await tokenResponse.json();
-  return tokenData.access_token || null;
-}
+import getTwitchAccessToken from '../utils/getTwitchAccessToken';
 
 async function getStreamerProfileInfo(streamers: string[], headers: Record<string, string>) {
   const URL = `https://api.twitch.tv/helix/users?login=${streamers.join('&login=')}`;
@@ -65,7 +43,7 @@ async function getStreamerData(streamers: string[], clientID: string, clientSecr
     streamers = JSON.parse(streamers);
   }
 
-  const accessToken = await getAccessToken(clientID, clientSecret);
+  const accessToken = await getTwitchAccessToken(clientID, clientSecret);
 
   if (!accessToken) {
     console.log('no access token');
