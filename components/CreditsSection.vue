@@ -37,7 +37,6 @@
 				color="grey-darken-1"
 				href="https://ko-fi.com/octoparty"
 				target="_blank"
-				title="Support us on Ko-fi. Your support helps us keep the lights on and improve Octo.Party! Thank you!"
 			>
 				Tip
 			</v-btn>
