@@ -418,6 +418,12 @@
 			}
 		});
 
+		watch(expandedEmbed, (value) => {
+			if (ENABLE_REMEMBER_LAST_LAYOUT.value) {
+				userSettings.updateRememberedList(isExpand.value, value, embedsListStore.embedsList);
+			}
+		});
+
 		if (userSettings.RememberLastLayout) {
 			const { expanded, streamerList } = userSettings.LastLayout;
 			isExpand.value = expanded.status;
@@ -689,7 +695,6 @@
 								:removeShareItem="removeShareItem"
 								:addEmbed="addEmbed"
 								:editMode="editMode"
-
 							/>
 							<OfflineStreamersList
 								:inactiveStreamers="inactiveStreamers"
