@@ -50,7 +50,7 @@
 	const dialog = ref<boolean>(false);
 	const dialog2 = ref<boolean>(false);
 	const snackbar = ref<boolean>(false);
-	const octoStore = useOctoStore(); // Using the store
+	const octoStore = useGlobalStateStore(); // Using the store
 
 	// octoStore.setOctoData([
 	//   "mamicairo",

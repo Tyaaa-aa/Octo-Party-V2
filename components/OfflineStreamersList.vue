@@ -1,30 +1,37 @@
 <script lang="ts" setup>
-	import type { StreamerStatus } from "@/types/index.d.ts";
-	const props = defineProps<{
-		inactiveStreamers: Array<StreamerStatus>;
-		editMode: boolean;
-		removeShareItem: (streamer: string, event: MouseEvent) => void;
-		octoStore: any;
-	}>();
+	const globalStore = useGlobalStateStore();
+	const deleteStreamer = (item: string, event: MouseEvent) => {
+		if (event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+		globalStore.removeMatchingStringFromOctoData(item);
+		globalStore.activeStreamers = globalStore.activeStreamers.filter(
+			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
+		);
+		globalStore.inactiveStreamers = globalStore.inactiveStreamers.filter(
+			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
+		);
+	};
 </script>
 
 <template>
-	<h4 v-if="inactiveStreamers.length >= 1">
-		Not Streaming ({{ inactiveStreamers.length }})
+	<h4 v-if="globalStore.inactiveStreamers.length >= 1">
+		Not Streaming ({{ globalStore.inactiveStreamers.length }})
 	</h4>
 	<v-list>
 		<v-list-item
-			v-for="(nonActStreamer, index) in inactiveStreamers"
+			v-for="(nonActStreamer, index) in globalStore.inactiveStreamers"
 			:key="index"
 			class="non-streaming_row"
 		>
 			<v-btn
 				class="deletebtn"
-				:class="{ 'deletebtn-hide': !editMode }"
+				:class="{ 'deletebtn-hide': !globalStore.editMode }"
 				variant="plain"
 				icon="mdi-delete"
 				color="red-accent-2"
-				@click="(event: MouseEvent) => removeShareItem(nonActStreamer.user_login, event)"
+				@click="(event: MouseEvent) => deleteStreamer(nonActStreamer.user_login, event)"
 				v-auto-animate
 			>
 			</v-btn>
@@ -42,7 +49,7 @@
 			</span>
 		</v-list-item>
 		<div
-			v-if="octoStore.octoData.length === 0"
+			v-if="globalStore.octoData.length === 0"
 			class="mt-3 text-center"
 			style="display: block"
 		>

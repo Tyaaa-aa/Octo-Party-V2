@@ -1,63 +1,17 @@
 <script lang="ts" setup>
-	import { useTheme } from "vuetify";
-	import { useMouse } from "@vueuse/core";
-	// import { VueDraggableNext } from 'vue-draggable-next'
 	import draggable from "vuedraggable";
 
-	const theme = useTheme();
-	function toggleTheme() {
-		theme.global.name.value = theme.global.current.value.dark
-			? "light"
-			: "dark";
-	}
-
-	const octoStore = useOctoStore(); // Using the store
+	const globalStore = useGlobalStateStore(); // Using the store
 	const userSettings = useSettingStore();
 
-	const listExpand = ref<boolean>(false);
-	const notiExpand = ref<boolean>(false);
-
-	const SHOW_DEBUG_MENU = ref<boolean>(false);
-	const ENABLE_NOTIFICATIONS = ref<boolean>(true);
-	const ENABLE_AUTO_REMOVE_STREAM = ref<boolean>(true);
-	const ENABLE_REMEMBER_LAST_LAYOUT = ref<boolean>(true);
-
 	const IDLE_DURATION = 3000;
-	// const UPDATE_LIST_TIMER = 5000; // 3 seconds in milliseconds
 	const UPDATE_LIST_TIMER = 300000; // 5 minutes in milliseconds
 
-	const activeNotifications = ref<Notification[]>([]);
-
-	const clearAllNotifications = () => {
-		activeNotifications.value = [];
-		notiExpand.value = false;
-	};
-	const addEmbedFromNotification = (streamer_name: string) => {
-		addEmbed(streamer_name);
-		activeNotifications.value = activeNotifications.value.filter(
-			(notification) => notification.streamer_name !== streamer_name
-		);
-	};
-	const removeNotification = (streamer_name: string) => {
-		activeNotifications.value = activeNotifications.value.filter(
-			(notification) => notification.streamer_name !== streamer_name
-		);
-	};
-	const toggleNoti = () => notiExpand.value = !notiExpand.value
-
-	const handleFavsMenu = (action: Toggle) => {
-		if (action === "toggle") {
-			listExpand.value = !listExpand.value;
-			return;
-		}
-	};
-
-	const isIdle = ref(false);
 	let idleTimer: NodeJS.Timeout | null = null;
 	let isBtnsBoxHovered = false;
 	const handleMouseMove = () => {
-		if (isIdle.value && !isBtnsBoxHovered) {
-			isIdle.value = false;
+		if (globalStore.isIdle && !isBtnsBoxHovered) {
+			globalStore.isIdle = false;
 			resetIdleTimer();
 		}
 	};
@@ -66,7 +20,7 @@
 	};
 	const handleMouseLeave = () => {
 		isBtnsBoxHovered = false;
-		isIdle.value = true;
+		globalStore.isIdle = true;
 	};
 	const resetIdleTimer = () => {
 		if (idleTimer) {
@@ -74,7 +28,7 @@
 		}
 		idleTimer = setTimeout(() => {
 			if (!isBtnsBoxHovered) {
-				isIdle.value = true;
+				globalStore.isIdle = true;
 			}
 		}, IDLE_DURATION); // Idle duration in milliseconds (adjust as needed)
 	};
@@ -82,12 +36,13 @@
 		const target = event.target as HTMLElement;
 		// Check if the click occurred outside the octo-ui element
 		if (!target.closest(".octo-ui")) {
-			isIdle.value = true;
-			listExpand.value = false;
+			globalStore.isIdle = true;
+			globalStore.listExpand = false;
+			globalStore.editMode = false;
 		}
 
 		if (isMobile.value) {
-			isIdle.value = !isIdle.value;
+			globalStore.isIdle = !globalStore.isIdle;
 		}
 	};
 
@@ -96,74 +51,31 @@
 		isMobile.value = event.matches;
 	};
 
-	const editMode = ref(false);
-
 	const toggleEditMode = () => {
-		editMode.value = !editMode.value;
-	};
-
-	const removeShareItem = (item: string, event: MouseEvent) => {
-		if (event) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-		octoStore.removeMatchingStringFromOctoData(item);
-		activeStreamers.value = activeStreamers.value.filter(
-			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
-		);
-		inactiveStreamers.value = inactiveStreamers.value.filter(
-			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
-		);
-	};
-
-	const loading = ref(true);
-	const shareLoading = ref(false);
-	const startSearch = () => {
-		console.log("start search");
-		loading.value = true;
-		setTimeout(() => {
-			loading.value = false;
-		}, 2000);
-	};
-
-	const embedsListStore = useEmbedsListStore();
-
-	const addEmbed = (streamer: string) => {
-		if (embedsListStore.embedsList.includes(streamer)) return;
-		embedsListStore.addEmbed(streamer);
+		globalStore.editMode = !globalStore.editMode;
 	};
 
 	const removeEmbed = (streamer: string) => {
-		// console.log(embedsListStore.embedsList);
-
-		if (expandedEmbed.value === streamer) {
-			isExpand.value = false;
-			expandedEmbed.value = "";
+		if (globalStore.expandedEmbed === streamer) {
+			globalStore.isExpand = false;
+			globalStore.expandedEmbed = "";
 		}
 
-		embedsListStore.removeEmbed(streamer);
-
-		// console.log(embedsListStore.embedsList);
+		globalStore.removeEmbed(streamer);
 	};
 
-	const errorMsg = ref<string>("");
-	const isError = ref<boolean>(false);
-
-	const activeStreamers = ref<StreamerStatus[]>([]);
-	const inactiveStreamers = ref<StreamerStatus[]>([]);
-
 	const addAllStreams = () => {
-		activeStreamers.value.forEach((streamer) => {
-			embedsListStore.addEmbed(streamer.user_name);
+		globalStore.activeStreamers.forEach((streamer) => {
+			globalStore.addEmbed(streamer.user_name);
 		});
 	};
 
 	const checkStreamerStatus = async (
-		streamer: string[] = octoStore.octoData
+		streamer: string[] = globalStore.octoData
 	) => {
-		if (octoStore.octoData.length === 0) return;
+		if (globalStore.octoData.length === 0) return;
 		try {
-			loading.value = true;
+			globalStore.loading = true;
 			// throw new Error("Test error")
 			const response = await $fetch(`/api/twitch-streamer-status-v2`, {
 				method: "POST",
@@ -175,61 +87,44 @@
 			// Check if the response is valid
 			if (!response) {
 				console.log("No data received");
-				isError.value = true;
-				errorMsg.value = "Something went wrong with the request";
+				globalStore.showErrorMessage("Something went wrong with the request");
 				return;
 			}
 
 			// Check if the response is valid data
 			if (!("data" in response) || typeof response.data !== "object") {
 				console.log("Invalid data format");
-				isError.value = true;
-				errorMsg.value =
-					"Invalid data format. Please contact the developer. (Error code: 81)";
+				globalStore.showErrorMessage("Invalid data format. Please contact the developer. (Error code: 81)");
 				return;
 			}
 
 			// Check if the response is an error
 			if ("error" in response) {
 				console.log("Invalid data format");
-				isError.value = true;
-				errorMsg.value =
-					"Invalid data format. Please contact the developer. (Error code: 81)";
+				globalStore.showErrorMessage("Invalid data format. Please contact the developer. (Error code: 81)");
 				return;
 			}
 
 			const { offline, online } = response.data
-
-			// console.log(offline)
-			// console.log(online)
 
 			let onlineNames = [];
 			for (let i = 0; i < online.length; i++) {
 				onlineNames.push(online[i].user_name);
 			}
 
-			activeStreamers.value = online;
-			inactiveStreamers.value = offline;
-			loading.value = false;
+			globalStore.activeStreamers = online;
+			globalStore.inactiveStreamers = offline;
+			globalStore.loading = false;
 		} catch (error) {
 			// Handle any unexpected errors here
 			console.error("An unexpected error occurred:", error);
-			errorMsg.value =
-				"There was an issue getting streamer status, Please contact the developer. (Error code: 47)";
-			isError.value = true;
-			loading.value = false;
+			globalStore.showErrorMessage("There was an issue getting streamer status, Please contact the developer. (Error code: 47)");
+			globalStore.loading = false;
 		}
 	};
 
-	const QRvalue = ref("");
-	const showShare = ref(false);
-
-	const isSuccess = ref(false);
-	const successMsg = ref("");
-	const url = ref("");
-
 	const shareList = async () => {
-		shareLoading.value = true;
+		globalStore.shareLoading = true;
 
 		try {
 			const response = await $fetch(`/api/share`, {
@@ -237,95 +132,69 @@
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: { shared_data: JSON.stringify(octoStore.octoData) },
+				body: { shared_data: JSON.stringify(globalStore.octoData) },
 			});
 			console.log(response);
 
 			if (!response) {
 				console.log("No data received");
-				isError.value = true;
-				shareLoading.value = false;
-				errorMsg.value = "Something went wrong with the request";
+				globalStore.shareLoading = false;
+				globalStore.showErrorMessage("Something went wrong with the request");
 				return;
 			}
 
 			if ("error" in response && response.error) {
 				console.log("Invalid data format");
-				isError.value = true;
-				shareLoading.value = false;
-				errorMsg.value =
-					"Invalid data format. Please contact the developer. (Error code: 81)";
+				globalStore.shareLoading = false;
+				globalStore.showErrorMessage("Invalid data format. Please contact the developer. (Error code: 81)");
 				return;
 			}
 
 			const data = response.data;
 			const shared_link = data && data[0] ? data[0].shared_link : null;
-			url.value = `${window.location.href}share/${shared_link}`;
-			console.log(url);
+			globalStore.url = `${window.location.href}share/${shared_link}`;
 
-			QRvalue.value = url.value;
+			globalStore.QRvalue = globalStore.url;
 
-			shareLoading.value = false;
-			loading.value = false;
-			showShare.value = true;
+			globalStore.shareLoading = false;
+			globalStore.loading = false;
+			globalStore.showShare = true;
 
-			navigator.clipboard.writeText(url.value).then(
+			navigator.clipboard.writeText(globalStore.url).then(
 				function () {
 					/* clipboard successfully set */
-					isSuccess.value = true;
-					successMsg.value = "Link copied to clipboard!";
+					globalStore.showSuccessMessage("Link copied to clipboard!");
 				},
 				function () {
 					/* clipboard write failed */
-					errorMsg.value = `Failed to copy link to clipboard: ${url.value}`;
-					isError.value = true;
+					globalStore.showErrorMessage(`Failed to copy link to clipboard: ${globalStore.url}`);
 				}
 			);
 		} catch (error) {
 			// Handle any unexpected errors here
 			console.error("An unexpected error occurred:", error);
-			errorMsg.value =
-				"There was an issue sharing your list, Please contact the developer. (Error code: 47)";
-			isError.value = true;
-			shareLoading.value = false;
-			loading.value = false;
+			globalStore.showErrorMessage("There was an issue sharing your list, Please contact the developer. (Error code: 47)");
+			globalStore.shareLoading = false;
+			globalStore.loading = false;
 		}
 	};
-
-	const copySharedLink = () => {
-		navigator.clipboard.writeText(url.value).then(
-			function () {
-				/* clipboard successfully set */
-				isSuccess.value = true;
-				successMsg.value = "Link copied to clipboard!";
-			},
-			function () {
-				/* clipboard write failed */
-				errorMsg.value = `Failed to copy link to clipboard: ${url.value}`;
-				isError.value = true;
-			}
-		);
-	};
-
-	const searchedStreamer = ref("");
 
 	const addNewStreamer = async () => {
-		if (!searchedStreamer.value) {
+		if (!globalStore.searchedStreamer) {
 			return;
 		}
-		loading.value = true;
+		globalStore.loading = true;
 
-		searchedStreamer.value = searchedStreamer.value.trim();
+		globalStore.searchedStreamer = globalStore.searchedStreamer.trim();
 
 		// check if streamer is in list with any casing
-		const streamer = octoStore.octoData.find(
+		const streamer = globalStore.octoData.find(
 			(streamer) =>
-				streamer.toLowerCase() === searchedStreamer.value.toLowerCase()
+				streamer.toLowerCase() === globalStore.searchedStreamer.toLowerCase()
 		);
 		if (streamer) {
-			isError.value = true;
-			errorMsg.value = "Streamer already in list";
-			loading.value = false;
+			globalStore.showErrorMessage("Streamer already in list");
+			globalStore.loading = false;
 			return;
 		}
 
@@ -335,15 +204,14 @@
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: { streamerName: searchedStreamer.value },
+				body: { streamerName: globalStore.searchedStreamer },
 			});
 			console.log(response);
 			// Check if the response is valid
 			if (!response) {
 				console.log("No data received");
-				isError.value = true;
-				loading.value = false;
-				errorMsg.value = "Something went wrong please try again";
+				globalStore.loading = false;
+				globalStore.showErrorMessage("Something went wrong with the request");
 				return;
 			}
 
@@ -353,36 +221,33 @@
 			const streamerExist = data;
 			if (!streamerExist || typeof streamerExist !== "string") {
 				console.log("Streamer does not exist");
-				isError.value = true;
-				loading.value = false;
-				errorMsg.value = "Streamer does not exist";
+				globalStore.loading = false;
+				globalStore.showErrorMessage("Streamer does not exist");
 				return;
 			}
 
 			console.log("Streamer exist, adding to list");
-			isSuccess.value = true;
-			successMsg.value = "Streamer added to list!";
-			octoStore.addStringToOctoData(streamerExist);
+			globalStore.showSuccessMessage("Streamer added to list!");
+			globalStore.addStringToOctoData(streamerExist);
 			checkStreamerStatus();
-			searchedStreamer.value = "";
+			globalStore.searchedStreamer = "";
 		} catch (error) {
 			// Handle any unexpected errors here
 			console.error("An unexpected error occurred:", error);
-			errorMsg.value =
-				"There was an issue adding the streamer, Please contact the developer. (Error code: 47)";
-			isError.value = true;
-			loading.value = false;
+			globalStore.loading = false;
+			globalStore.showErrorMessage("There was an issue adding the streamer, Please contact the developer. (Error code: 47)");
 			return;
 		}
 
 		setTimeout(() => {
-			loading.value = false;
+			globalStore.loading = false;
 		}, 2000);
 	};
 
 	onMounted(() => {
 		resetIdleTimer();
 		const mediaQuery = window.matchMedia("(pointer: coarse)");
+
 		// Check if the media query matches (common for touch-based devices)
 		isMobile.value = mediaQuery.matches;
 
@@ -390,45 +255,37 @@
 		if (mediaQuery.addEventListener) {
 			mediaQuery.addEventListener("change", updateIsMobile);
 		}
-		checkStreamerStatus(octoStore.octoData);
-
-		setTimeout(() => {
-			loading.value = false;
-		}, 3000);
+		globalStore.loadOctoDataFromLocalStorage()
+		checkStreamerStatus(globalStore.octoData);
 
 		const updateTimer = setInterval(() => {
 			checkStreamerStatus();
 		}, UPDATE_LIST_TIMER); // 5 minutes in milliseconds
 
-		// Apply user saved settings
-		ENABLE_NOTIFICATIONS.value = userSettings.Notifications
-		ENABLE_AUTO_REMOVE_STREAM.value = userSettings.AutoRemove
-		ENABLE_REMEMBER_LAST_LAYOUT.value = userSettings.RememberLastLayout
-
-		// Update saved layout
-		watch(embedsListStore, (streamerList, oldStreamerList) => {
-			if (ENABLE_REMEMBER_LAST_LAYOUT.value) {
-				userSettings.updateRememberedList(isExpand.value, expandedEmbed.value, streamerList.embedsList);
+		// Watch for changes to embeds and their state and update remember list
+		watch(() => globalStore.embedsList, () => {
+			if (globalStore.ENABLE_REMEMBER_LAST_LAYOUT) {
+				userSettings.updateRememberedList(globalStore.isExpand, globalStore.expandedEmbed, globalStore.embedsList);
 			}
 		});
 
-		watch(isExpand, (value) => {
-			if (ENABLE_REMEMBER_LAST_LAYOUT.value) {
-				userSettings.updateRememberedList(value, expandedEmbed.value, embedsListStore.embedsList);
+		watch(() => globalStore.isExpand, (value) => {
+			if (globalStore.ENABLE_REMEMBER_LAST_LAYOUT) {
+				userSettings.updateRememberedList(value, globalStore.expandedEmbed, globalStore.embedsList);
 			}
 		});
 
-		watch(expandedEmbed, (value) => {
-			if (ENABLE_REMEMBER_LAST_LAYOUT.value) {
-				userSettings.updateRememberedList(isExpand.value, value, embedsListStore.embedsList);
+		watch(() => globalStore.expandedEmbed, (value) => {
+			if (globalStore.ENABLE_REMEMBER_LAST_LAYOUT) {
+				userSettings.updateRememberedList(globalStore.isExpand, value, globalStore.embedsList);
 			}
 		});
 
 		if (userSettings.RememberLastLayout) {
 			const { expanded, streamerList } = userSettings.LastLayout;
-			isExpand.value = expanded.status;
-			expandedEmbed.value = expanded.streamer;
-			embedsListStore.embedsList = streamerList;
+			globalStore.isExpand = expanded.status;
+			globalStore.expandedEmbed = expanded.streamer;
+			globalStore.embedsList = streamerList;
 		} else {
 			userSettings.updateRememberedList(false, "", []);
 		}
@@ -446,37 +303,9 @@
 		}
 	});
 
-	const list = embedsListStore.embedsList.map((name, index) => {
-		return { name, order: index + 1 };
-	});
-
-	const drag = ref(false);
-
-	const dragOptions = computed(() => ({
-		animation: 200,
-		group: "description",
-		disabled: false,
-		ghostClass: "ghost",
-	}));
-
-	// SETTINGS CARD (TO BE MOVED TO A SEPARATE COMPONENT)
-	watch(ENABLE_NOTIFICATIONS, (value) => {
-		userSettings.setNotifications(value);
-		if (!value) {
-			notiExpand.value = false;
-		}
-	});
-
-	watch(ENABLE_AUTO_REMOVE_STREAM, (value) => {
-		userSettings.setAutoRemove(value);
-	});
-
 	// Remove the streamer when they go offline
-	watch(activeStreamers, (newvalue, oldvalue) => {
+	watch(() => globalStore.activeStreamers, (newvalue, oldvalue) => {
 		// check for streamers that have gone offline and remove them
-		// console.log("Removing offline streamers");
-		// console.log(oldvalue);
-		// console.log(newvalue);
 		const offlineStreamers = oldvalue.filter(
 			(streamer) =>
 				!newvalue.some(
@@ -490,108 +319,53 @@
 			});
 		});
 
-		if(isSuccess.value && successMsg.value === "Streamer added to list!") return;
+		if(globalStore.isSuccess && globalStore.successMsg === "Streamer added to list!") return;
 
-		if (newItem && ENABLE_NOTIFICATIONS.value && oldvalue.length > 0) {
-			// console.log("New item found:", newItem);
+		if (newItem && globalStore.ENABLE_NOTIFICATIONS && oldvalue.length > 0) {
+			console.log("New item found:", newItem);
 			const newNoti = {
 				streamer_name: newItem.user_name,
 				view_count: newItem.viewer_count.toString(),
 				timestamp: new Date(),
 			} as Notification;
-			activeNotifications.value = [newNoti, ...activeNotifications.value];
+			globalStore.activeNotifications = [newNoti, ...globalStore.activeNotifications];
 			
-			if (notiExpand.value) return;
-			notiExpand.value = true;
+			if (globalStore.notiExpand) return;
+			globalStore.notiExpand = true;
 			setTimeout(() => {
-				notiExpand.value = false;
+				globalStore.notiExpand = false;
 			}, 5000);
 		} else {
 			// console.log("No new item found.");
 		}
 
-		if (!ENABLE_AUTO_REMOVE_STREAM.value) return;
+		if (!globalStore.ENABLE_AUTO_REMOVE_STREAM) return;
 
 		offlineStreamers.forEach((streamer) => {
-			embedsListStore.removeEmbed(streamer.user_name);
-			if (streamer.user_name === expandedEmbed.value) {
-				isExpand.value = false;
-				expandedEmbed.value = "";
+			globalStore.removeEmbed(streamer.user_name);
+			if (streamer.user_name === globalStore.expandedEmbed) {
+				globalStore.isExpand = false;
+				globalStore.expandedEmbed = "";
 			}
 			console.log("Removing streamer: " + streamer.user_name);
 		});
 	});
-	
-	watch(ENABLE_REMEMBER_LAST_LAYOUT, (value) => {
-		userSettings.setRememberLastLayout(value);
-	});
 
-	// watch(activeStreamers, (oldvalue, newvalue) => {
-	// 	if (!ENABLE_NOTIFICATIONS) return;
-	//   // Check for new streamers and show a notification
-	//   console.log(oldvalue, newvalue);
-
-	// });
-
-
-	const isExpand = ref<boolean>(false);
-	const expandedEmbed = ref<string>("");
 	const expandEmbed = (streamer: string) => {
 		// console.log(streamer);
-
-		if (isExpand.value && expandedEmbed.value === streamer) {
-			isExpand.value = false;
-			expandedEmbed.value = "";
+		if (globalStore.isExpand && globalStore.expandedEmbed === streamer) {
+			globalStore.isExpand = false;
+			globalStore.expandedEmbed = "";
 			return;
 		}
-		isExpand.value = true;
-		expandedEmbed.value = streamer;
-	};
-
-	const isFullscreen = ref<boolean>(false);
-	const toggleFullscreen = () => {
-		if (!document.fullscreenElement) {
-			document.documentElement.requestFullscreen()
-			isFullscreen.value = true
-		} else {
-			if (document.exitFullscreen) {
-				document.exitFullscreen()
-				isFullscreen.value = false
-			}
-		}
-	};
-
-	const isDragging = ref<boolean>(false);
-	
-	const debugStreamer: string = 'LinusTech'
-
-	const debugRemoveStreamer = () => {
-		console.log("Removing streamer");
-		activeStreamers.value = activeStreamers.value.filter(
-			(streamer) => streamer.user_name !== debugStreamer
-		);
-	};
-
-	const debugAddStreamer = () => {
-		console.log("Adding streamer");
-
-		activeStreamers.value = [
-			...activeStreamers.value,
-			{
-				user_login: debugStreamer,
-				user_name: debugStreamer,
-				viewer_count: 888888,
-				profile_picture: "https://octo.party/logo.svg",
-			},
-		];
+		globalStore.isExpand = true;
+		globalStore.expandedEmbed = streamer;
 	};
 </script>
 
 <template>
 		<DebugMenu
-		:SHOW_DEBUG_MENU="SHOW_DEBUG_MENU"
-		@debugAddStreamer="debugAddStreamer"
-		@debugRemoveStreamer="debugRemoveStreamer"
+		@refreshList="checkStreamerStatus"
 		/>
 	<main
 		@mousemove="handleMouseMove"
@@ -601,36 +375,24 @@
 		<div
 			class="octo-ui"
 			:class="{
-				hidden: isIdle,
-				show: listExpand || notiExpand || embedsListStore.embedsList.length === 0,
-				'edit-mode': editMode,
+				hidden: globalStore.isIdle,
+				show: globalStore.listExpand || globalStore.notiExpand || globalStore.embedsList.length === 0,
+				'edit-mode': globalStore.editMode,
 			}"
 			@mouseenter="handleMouseEnter"
 			@mouseleave="handleMouseLeave"
 		>
 			<!-- QR Code Card -->
-			<QRCodeCard
-				:listExpand="listExpand"
-				:url="url"
-				:QRvalue="QRvalue"
-				@copySharedLink="copySharedLink"
-			/>
+			<QRCodeCard />
 			<!-- Settings Card -->
-			<SettingsCard
-				:listExpand="listExpand"
-				:SHOW_DEBUG_MENU="SHOW_DEBUG_MENU"
-				@showDebugMenu="SHOW_DEBUG_MENU = $event"
-				@enableNotifications="ENABLE_NOTIFICATIONS =  $event"
-				@enableAutoRemoveStream="ENABLE_AUTO_REMOVE_STREAM =  $event"
-				@enableRememberLastLayout="ENABLE_REMEMBER_LAST_LAYOUT =  $event"
-			/>
+			<SettingsCard />
 			<!-- Main Menu Card -->
 			<v-expand-transition>
 				<v-card
-					v-if="listExpand"
+					v-if="globalStore.listExpand"
 					variant="elevated"
 					class="favs-menu mx-auto"
-					:loading="loading"
+					:loading="globalStore.loading"
 				>
 					<v-row no-gutters class="align-center">
 						<v-col cols="12" class="pa-5">
@@ -640,7 +402,7 @@
 								append-inner-icon="mdi-magnify"
 								@click:append-inner="addNewStreamer"
 								@keydown.enter="addNewStreamer"
-								v-model="searchedStreamer"
+								v-model="globalStore.searchedStreamer"
 								hide-details
 							></v-text-field>
 						</v-col>
@@ -648,7 +410,7 @@
 					<v-row no-gutters class="pl-5 pr-5 pb-5">
 						<v-col
 							cols="12"
-							v-if="octoStore.octoData.length !== 0"
+							v-if="globalStore.octoData.length !== 0"
 							style="display: flex; justify-content: space-between"
 						>
 							<v-btn
@@ -661,15 +423,15 @@
 								edit
 							</v-btn>
 
-							<v-tooltip v-model="showShare" location="bottom">
+							<v-tooltip v-model="globalStore.showShare" location="bottom">
 								<template v-slot:activator="{ props }">
 									<v-btn
 										prepend-icon="mdi-share"
 										variant="flat"
 										color="grey-darken-3"
 										@click="shareList"
-										:loading="shareLoading"
-										v-if="octoStore.octoData.length !== 0"
+										:loading="globalStore.shareLoading"
+										v-if="globalStore.octoData.length !== 0"
 										v-bind="props"
 									>
 										share
@@ -690,77 +452,50 @@
 					</v-row>
 					<v-row no-gutters class="pl-5 pr-5 favs-list-container">
 						<v-col cols="12">
-							<SkeletonStreamerList
+							<!-- <SkeletonStreamerList
 							v-if="
 							octoStore.octoData.length > 0
 							&&
-							(activeStreamers.length === 0
+							(globalStore.activeStreamers.length === 0
 							||
-							inactiveStreamers.length === 0)
-							"/>
-							<OnlineStreamersList
-								:activeStreamers="activeStreamers"
-								:removeShareItem="removeShareItem"
-								:addEmbed="addEmbed"
-								:editMode="editMode"
-							/>
-							<OfflineStreamersList
-								:inactiveStreamers="inactiveStreamers"
-								:removeShareItem="removeShareItem"
-								:octoStore="octoStore"
-								:editMode="editMode"
-							/>
+							globalStore.inactiveStreamers.length === 0)
+							"/> -->
+							<OnlineStreamersList />
+							<OfflineStreamersList />
 						</v-col>
 						<CreditsSection />
 					</v-row>
 				</v-card>
 			</v-expand-transition>
 			
-			<ButtonsOverlay 
-			:listExpand="listExpand"
-			:isFullscreen="isFullscreen"
-			:notiExpand="notiExpand"
-			:ENABLE_NOTIFICATIONS="ENABLE_NOTIFICATIONS"
-			:activeNotifications="activeNotifications"
-			:toggleFullscreen="toggleFullscreen"
-			:handleFavsMenu="handleFavsMenu"
-			:toggleNoti="toggleNoti"
-			/>
+			<ButtonsOverlay />
 			
-			<NotificationsCard
-			:notiExpand="notiExpand"
-			:ENABLE_NOTIFICATIONS="ENABLE_NOTIFICATIONS"
-			:activeNotifications="activeNotifications"
-			:addEmbed="addEmbed"
-			@clearAllNotifications="clearAllNotifications"
-			@addEmbedFromNoti="addEmbedFromNotification"
-			@removeNoti="removeNotification"
-			/>
+			<NotificationsCard />
 			
 		</div>
 		<!-- Embedded Streams -->
 		<draggable
-			v-model="embedsListStore.embedsList"
+			v-model="globalStore.embedsList"
 			item-key="id"
 			:class="
-				!isExpand
+				!globalStore.isExpand
 					? 'embeds-container'
 					: 'embeds-container embeds-container-expand'
 			"
 			drag-class="drag"
 			ghost-class="ghost"
-			@start="isDragging = true"
-			@end="isDragging = false"
+			@start="globalStore.isDragging = true"
+			@end="globalStore.isDragging = false"
 			handle=".drag-btn"
 		>
 			<template #item="{ element }">
 				<div
 					class="embed-twitch-item"
 					:class="{
-						'embed-twitch-item expanded-embed': element === expandedEmbed,
-						'embed-twitch-item': !(element === expandedEmbed),
-						'expand-solo': embedsListStore.embedsList.length === 1 && isExpand,
-						'embed-dragging': isDragging,
+						'embed-twitch-item expanded-embed': element === globalStore.expandedEmbed,
+						'embed-twitch-item': !(element === globalStore.expandedEmbed),
+						'expand-solo': globalStore.embedsList.length === 1 && globalStore.isExpand,
+						'embed-dragging': globalStore.isDragging,
 					}"
 				>
 					<EmbedTwitch :creator="element" :key="element" />
@@ -772,7 +507,7 @@
 					></v-btn>
 					<v-btn
 						:icon="
-							element === expandedEmbed
+							element === globalStore.expandedEmbed
 								? 'mdi-arrow-collapse'
 								: 'mdi-arrow-expand'
 						"
@@ -787,10 +522,10 @@
 						variant="text"
 						v-if="
 						// Show the drag button if there is more than 1 embed an embed is not expanded
-						(!isExpand && embedsListStore.embedsList.length > 1)
+						(!globalStore.isExpand && globalStore.embedsList.length > 1)
 						||
 						// Show the drag button if there is more than 2 embeds an embed is expanded
-						(isExpand && embedsListStore.embedsList.length > 2)"
+						(globalStore.isExpand && globalStore.embedsList.length > 2)"
 					></v-btn>
 					<span class="embed-drag-box">{{ element }}</span>
 				</div>
@@ -801,11 +536,11 @@
 	<v-snackbar
 		:timeout="3000"
 		color="red-darken-1"
-		v-model="isError"
+		v-model="globalStore.isError"
 		rounded="pill"
 	>
-		<span class="pr-md-5">{{ errorMsg }}</span>
-		<v-btn color="red-lighten-1" variant="flat" @click="isError = false">
+		<span class="pr-md-5">{{ globalStore.errorMsg }}</span>
+		<v-btn color="red-lighten-1" variant="flat" @click="globalStore.isError = false">
 			Close
 		</v-btn>
 	</v-snackbar>
@@ -813,11 +548,11 @@
 	<v-snackbar
 		:timeout="3000"
 		color="deep-purple-accent-4"
-		v-model="isSuccess"
+		v-model="globalStore.isSuccess"
 		rounded="pill"
 	>
-		<span class="pr-md-5">{{ successMsg }}</span>
-		<v-btn color="deep-purple-accent-2" variant="flat" @click="isSuccess = false">
+		<span class="pr-md-5">{{ globalStore.successMsg }}</span>
+		<v-btn color="deep-purple-accent-2" variant="flat" @click="globalStore.isSuccess = false">
 			Close
 		</v-btn>
 	</v-snackbar>

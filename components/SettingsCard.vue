@@ -1,62 +1,42 @@
 <script setup lang="ts">
-	const props = defineProps({
-		listExpand: Boolean,
-		SHOW_DEBUG_MENU: Boolean,
-	});
-
-	const emit = defineEmits([
-		"showDebugMenu",
-		"enableNotifications",
-		"enableAutoRemoveStream",
-		"enableRememberLastLayout",
-	]);
-
-	const ENABLE_DEBUG = ref<boolean>(false);
-
-	const showDebugMenu = ref<boolean>();
-	const enableNotifications = ref<boolean>();
-	const enableAutoRemoveStream = ref<boolean>();
-	const enableRememberLastLayout = ref<boolean>();
-
-	watch(showDebugMenu, (newVal) => {
-		emit("showDebugMenu", newVal);
-	});
-
-	watch(enableNotifications, (newVal) => {
-		emit("enableNotifications", newVal);
-	});
-
-	watch(enableAutoRemoveStream, (newVal) => {
-		emit("enableAutoRemoveStream", newVal);
-	});
-
-	watch(enableRememberLastLayout, (newVal) => {
-		emit("enableRememberLastLayout", newVal);
-	});
-
+	const globalStore = useGlobalStateStore();
 	const userSettings = useSettingStore();
+	const ENABLE_DEBUG = ref<boolean>(false);
+	
+	watch(() => globalStore.ENABLE_NOTIFICATIONS, (newVal) => {
+		userSettings.Notifications = newVal;
+		if (!newVal) {
+			globalStore.notiExpand = false;
+		}
+	});
+
+	watch(() => globalStore.ENABLE_AUTO_REMOVE_STREAM, (newVal) => {
+		userSettings.AutoRemove = newVal;
+	});
+
+	watch(() => globalStore.ENABLE_REMEMBER_LAST_LAYOUT, (newVal) => {
+		userSettings.RememberLastLayout = newVal;
+	});
 
 	onMounted(() => {
-		enableNotifications.value = userSettings.Notifications;
-		enableAutoRemoveStream.value = userSettings.AutoRemove;
-		enableRememberLastLayout.value = userSettings.RememberLastLayout;
+		globalStore.ENABLE_NOTIFICATIONS = userSettings.Notifications;
+		globalStore.ENABLE_AUTO_REMOVE_STREAM = userSettings.AutoRemove;
+		globalStore.ENABLE_REMEMBER_LAST_LAYOUT = userSettings.RememberLastLayout;
 
-		if (ENABLE_DEBUG.value) {
-			showDebugMenu.value = !showDebugMenu.value;
-			emit("showDebugMenu", true);
-		}
+		if (ENABLE_DEBUG.value) globalStore.SHOW_DEBUG_MENU = true
+
 	});
 </script>
 
 <template>
 	<v-expand-transition>
-		<v-card v-if="listExpand" variant="elevated" class="share-card">
+		<v-card v-if="globalStore.listExpand" variant="elevated" class="share-card">
 			<v-row class="d-flex justify-space-between align-center ma-0">
 				<v-col cols="12" class="pa-5 pb-2 pt-2">
 					<v-list-item class="pa-0" v-if="ENABLE_DEBUG">
 						<v-switch
 							label="Enable Debug Mode"
-							v-model="showDebugMenu"
+							v-model="globalStore.SHOW_DEBUG_MENU"
 							inset
 							color="deep-purple-darken-1"
 						></v-switch>
@@ -64,7 +44,7 @@
 					<v-list-item class="pa-0">
 						<v-switch
 							label="Show Notifications"
-							v-model="enableNotifications"
+							v-model="globalStore.ENABLE_NOTIFICATIONS"
 							inset
 							color="deep-purple-darken-1"
 						></v-switch>
@@ -72,7 +52,7 @@
 					<v-list-item class="pa-0">
 						<v-switch
 							label="Auto Remove Offline Streams"
-							v-model="enableAutoRemoveStream"
+							v-model="globalStore.ENABLE_AUTO_REMOVE_STREAM"
 							inset
 							color="deep-purple-darken-1"
 						></v-switch>
@@ -80,7 +60,7 @@
 					<v-list-item class="pa-0">
 						<v-switch
 							label="Remember Last Layout"
-							v-model="enableRememberLastLayout"
+							v-model="globalStore.ENABLE_REMEMBER_LAST_LAYOUT"
 							inset
 							color="deep-purple-darken-1"
 						></v-switch>

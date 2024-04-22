@@ -1,34 +1,48 @@
 <script setup lang="ts">
 	import QrcodeVue, { type Level, type RenderAs } from "qrcode.vue";
-
-	const props = defineProps<{
-		url: String;
-		QRvalue: String;
-		listExpand: Boolean;
-	}>();
+	const globalStore = useGlobalStateStore();
 
 	const level = ref<Level>("M");
 	const renderAs = ref<RenderAs>("canvas");
+
+	const copySharedLink = () => {
+		navigator.clipboard.writeText(globalStore.url).then(
+			function () {
+				/* clipboard successfully set */
+				globalStore.isSuccess = true;
+				globalStore.successMsg = "Link copied to clipboard!";
+			},
+			function () {
+				/* clipboard write failed */
+				globalStore.errorMsg = `Failed to copy link to clipboard: ${globalStore.url}`;
+				globalStore.isError = true;
+			}
+		);
+	};
 </script>
 <template>
 	<v-expand-transition>
-		<v-card v-if="listExpand && url" variant="elevated" class="share-card">
+		<v-card
+			v-if="globalStore.listExpand && globalStore.url"
+			variant="elevated"
+			class="share-card"
+		>
 			<v-row class="d-flex justify-space-between align-center ma-0">
 				<v-col cols="5" class="pa-5">
 					<qrcode-vue
 						class="qrcode"
-						:value="props.QRvalue"
 						:level="level"
 						:render-as="renderAs"
+						:value="globalStore.QRvalue"
 					/>
 				</v-col>
 				<v-col cols="7" class="pa-5 pl-0">
 					<v-text-field
-						:value="url"
+						:value="globalStore.url"
 						variant="solo-filled"
 						append-inner-icon="mdi-content-copy"
-						@click:append-inner="$emit('copySharedLink')"
-						@keydown.enter="$emit('copySharedLink')"
+						@click:append-inner="copySharedLink"
+						@keydown.enter="copySharedLink"
 						hide-details
 						class="copy-url"
 					></v-text-field>

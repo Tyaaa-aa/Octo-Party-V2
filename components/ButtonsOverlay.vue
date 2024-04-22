@@ -1,30 +1,34 @@
 <script setup lang="ts">
-    import type { Notification } from "@/types/index";
-	const props = defineProps<{
-		listExpand: Boolean;
-		isFullscreen: Boolean;
-		notiExpand: Boolean;
-		ENABLE_NOTIFICATIONS: Boolean;
-		activeNotifications: Notification[];
-		handleFavsMenu: (action: Toggle) => void;
-		toggleFullscreen: () => void;
-		toggleNoti: () => void;
-	}>();
+	const globalStore = useGlobalStateStore();
+	
+	const toggleFullscreen = () => {
+		if (!document.fullscreenElement) {
+			document.documentElement.requestFullscreen()
+			globalStore.isFullscreen = true
+		} else {
+			if (document.exitFullscreen) {
+				document.exitFullscreen()
+				globalStore.isFullscreen = false
+			}
+		}
+	};
+
+	const toggleNoti = () => globalStore.notiExpand = !globalStore.notiExpand
 </script>
 <template>
 	<div class="btns-box">
 		<v-btn
-			:icon="!listExpand ? 'mdi-menu' : 'mdi-close'"
-			:class="!listExpand ? 'main-btn' : 'main-btn main-btn-close'"
+			:icon="!globalStore.listExpand ? 'mdi-menu' : 'mdi-close'"
+			:class="!globalStore.listExpand ? 'main-btn' : 'main-btn main-btn-close'"
 			variant="elevated"
 			color="deep-purple-darken-1"
-			@click="handleFavsMenu('toggle')"
+			@click="globalStore.handleMainMenu"
 		>
 		</v-btn>
 		<v-btn
-			:icon="!isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'"
+			:icon="!globalStore.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'"
 			:class="
-				ENABLE_NOTIFICATIONS
+				globalStore.ENABLE_NOTIFICATIONS
 					? 'fullscreen-btn'
 					: 'fullscreen-btn fullscreen-btn-right'
 			"
@@ -36,16 +40,16 @@
 		<div>
 			<v-expand-transition>
 				<v-btn
-					:icon="!notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
-					:variant="!notiExpand ? 'plain' : 'elevated'"
-					:color="!notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
+					:icon="!globalStore.notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
+					:variant="!globalStore.notiExpand ? 'plain' : 'elevated'"
+					:color="!globalStore.notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
 					@click="toggleNoti"
 					:class="
-						!notiExpand
+						!globalStore.notiExpand
 							? 'toggleNotiBtn main-btn'
 							: 'toggleNotiBtn main-btn main-btn-close'
 					"
-					v-if="ENABLE_NOTIFICATIONS"
+					v-if="globalStore.ENABLE_NOTIFICATIONS"
 				>
 				</v-btn>
 			</v-expand-transition>
@@ -53,11 +57,11 @@
 				<span
 					class="notiCount"
 					v-if="
-						ENABLE_NOTIFICATIONS &&
-						!notiExpand &&
-						activeNotifications.length > 0
+						globalStore.ENABLE_NOTIFICATIONS &&
+						!globalStore.notiExpand &&
+						globalStore.activeNotifications.length > 0
 					"
-					>{{ activeNotifications.length }}
+					>{{ globalStore.activeNotifications.length }}
 				</span>
 			</v-slide-y-transition>
 		</div>

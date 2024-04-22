@@ -1,31 +1,38 @@
 <script lang="ts" setup>
-	import type { StreamerStatus } from "@/types/index.d.ts";
-	const props = defineProps<{
-		activeStreamers: Array<StreamerStatus>;
-		editMode: boolean;
-		removeShareItem: (streamer: string, event: MouseEvent) => void;
-		addEmbed: (streamer_name: string) => void;
-	}>();
+	const globalStore = useGlobalStateStore();
+	const deleteStreamer = (item: string, event: MouseEvent) => {
+		if (event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+		globalStore.removeMatchingStringFromOctoData(item);
+		globalStore.activeStreamers = globalStore.activeStreamers.filter(
+			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
+		);
+		globalStore.inactiveStreamers = globalStore.inactiveStreamers.filter(
+			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
+		);
+	};
 </script>
 
 <template>
-	<h4 v-if="activeStreamers.length >= 1">
-		Streaming ({{ activeStreamers.length }})
+	<h4 v-if="globalStore.activeStreamers.length >= 1">
+		Streaming ({{ globalStore.activeStreamers.length }})
 	</h4>
 	<v-list>
 		<v-list-item
-			v-for="(actStreamer, index) in activeStreamers"
+			v-for="(actStreamer, index) in globalStore.activeStreamers"
 			:key="index"
-			@click="addEmbed(actStreamer.user_login)"
+			@click="globalStore.addEmbed(actStreamer.user_login)"
 			class="streaming_row"
 		>
 			<v-btn
 				class="deletebtn"
-				:class="{ 'deletebtn-hide': !editMode }"
+				:class="{ 'deletebtn-hide': !globalStore.editMode }"
 				variant="plain"
 				icon="mdi-delete"
 				color="red-accent-2"
-				@click="(event: MouseEvent) => removeShareItem(actStreamer.user_login, event)"
+				@click="(event: MouseEvent) => deleteStreamer(actStreamer.user_login, event)"
 				v-auto-animate
 			>
 			</v-btn>
@@ -37,12 +44,15 @@
 			<span class="active_streamer">
 				{{ actStreamer.user_name }}
 				<span v-if="isNotEnglish(actStreamer.user_name)">
-        ({{ actStreamer.user_login }})
-        </span>
+					({{ actStreamer.user_login }})
+				</span>
 			</span>
 			<span class="streamer_views">{{ actStreamer.viewer_count }}</span>
 		</v-list-item>
-		<v-divider class="ma-3" v-if="activeStreamers.length >= 1"></v-divider>
+		<v-divider
+			class="ma-3"
+			v-if="globalStore.activeStreamers.length >= 1"
+		></v-divider>
 	</v-list>
 </template>
 

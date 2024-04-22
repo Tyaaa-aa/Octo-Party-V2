@@ -1,7 +1,28 @@
 <script setup>
-	const props = defineProps({
-		SHOW_DEBUG_MENU: Boolean,
-	});
+	const globalStore = useGlobalStateStore();
+
+	const debugStreamer = "LinusTech";
+
+	const debugRemoveStreamer = () => {
+		console.log("Removing streamer");
+		globalStore.activeStreamers = globalStore.activeStreamers.filter(
+			(streamer) => streamer.user_name !== debugStreamer
+		);
+	};
+
+	const debugAddStreamer = () => {
+		console.log("Adding streamer");
+
+		globalStore.activeStreamers = [
+			...globalStore.activeStreamers,
+			{
+				user_login: debugStreamer,
+				user_name: debugStreamer,
+				viewer_count: 888888,
+				profile_picture: "https://octo.party/logo.svg",
+			},
+		];
+	};
 </script>
 
 <template>
@@ -15,7 +36,7 @@
 				width: 300px;
 				z-index: 99999;
 			"
-			v-if="props.SHOW_DEBUG_MENU"
+			v-if="globalStore.SHOW_DEBUG_MENU"
 		>
 			<v-card>
 				<v-row class="d-flex justify-space-between align-center ma-0">
@@ -23,13 +44,31 @@
 						<v-list-item class="pa-0">
 							<h5 style="color: orange">Debug Menu</h5>
 						</v-list-item>
-						<v-list-item class="pa-4" @click="$emit('debugAddStreamer')">
+						<v-list-item class="pa-4" @click="debugAddStreamer">
 							Add Streamer
 						</v-list-item>
-						<v-list-item class="pa-4" @click="$emit('debugRemoveStreamer')">
+						<v-list-item class="pa-4" @click="debugRemoveStreamer">
 							Remove Streamer
 						</v-list-item>
-						<v-list-item class="pa-4" @click="checkStreamerStatus()">
+						<v-list-item
+							class="pa-4"
+							@click="
+								globalStore.showErrorMessage('Error message from debug menu')
+							"
+						>
+							Show Error Message
+						</v-list-item>
+						<v-list-item
+							class="pa-4"
+							@click="
+								globalStore.showSuccessMessage(
+									'Success message from debug menu'
+								)
+							"
+						>
+							Show Success Message
+						</v-list-item>
+						<v-list-item class="pa-4" @click="$emit('refreshList')">
 							Refresh List
 						</v-list-item>
 					</v-col>
