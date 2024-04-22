@@ -65,6 +65,14 @@
     font-size: calc(var(--v-icon-size-multiplier)* 2em) !important;
 }
 
+.edit-btn .v-icon{
+	transition: all 0.2s ease-in-out;
+}
+
+.edit-btn-editmode .v-icon{
+	rotate: -90deg;
+}
+
 /* .octo-ui *::-webkit-scrollbar {
     width: 0px;
 } */

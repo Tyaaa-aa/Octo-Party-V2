@@ -414,11 +414,11 @@
 							style="display: flex; justify-content: space-between"
 						>
 							<v-btn
-								prepend-icon="mdi-pencil"
+								:prepend-icon="globalStore.editMode ? 'mdi-close' : 'mdi-pencil'"
 								variant="flat"
-								color="grey-darken-3"
+								:color="globalStore.editMode ? 'grey-darken-1' : 'grey-darken-3'"
 								@click="toggleEditMode"
-								class="edit-btn"
+								:class="globalStore.editMode ? 'edit-btn edit-btn-editmode' : 'edit-btn'"
 							>
 								edit
 							</v-btn>
