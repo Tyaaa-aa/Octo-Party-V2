@@ -13,15 +13,23 @@
 			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
 		);
 	};
+
+	const filteredStreamers = computed(() => {
+		const searchTerm = globalStore.searchedStreamer.trim().toUpperCase();
+		return globalStore.activeStreamers.filter((streamer) => {
+			const userLogin = streamer.user_login.toUpperCase();
+			return userLogin.includes(searchTerm);
+		});
+	});
 </script>
 
 <template>
-	<h4 v-if="globalStore.activeStreamers.length >= 1">
-		Streaming ({{ globalStore.activeStreamers.length }})
+	<h4 v-if="filteredStreamers.length >= 1">
+		Streaming ({{ filteredStreamers.length }})
 	</h4>
 	<v-list>
 		<v-list-item
-			v-for="(actStreamer, index) in globalStore.activeStreamers"
+			v-for="(actStreamer, index) in filteredStreamers"
 			:key="index"
 			@click="globalStore.addEmbed(actStreamer.user_login)"
 			class="streaming_row"
@@ -51,7 +59,7 @@
 		</v-list-item>
 		<v-divider
 			class="ma-3"
-			v-if="globalStore.activeStreamers.length >= 1"
+			v-if="filteredStreamers.length >= 1"
 		></v-divider>
 	</v-list>
 </template>
