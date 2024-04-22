@@ -83,7 +83,7 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         showSuccessMessage(msg: string) {
             this.successMsg = msg
             this.isSuccess = true
-        }
+        },
     },
     getters: {
         // ...getters if needed

@@ -68,6 +68,9 @@
 						>
 							Show Success Message
 						</v-list-item>
+						<v-list-item class="pa-4" @click="globalStore.url = 'https://tya.design/'">
+							Show QR Code Card
+						</v-list-item>
 						<v-list-item class="pa-4" @click="$emit('refreshList')">
 							Refresh List
 						</v-list-item>
