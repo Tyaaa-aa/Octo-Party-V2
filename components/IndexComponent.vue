@@ -73,7 +73,10 @@
 	const checkStreamerStatus = async (
 		streamer: string[] = globalStore.octoData
 	) => {
-		if (globalStore.octoData.length === 0) return;
+		if (globalStore.octoData.length === 0) {
+			globalStore.loading = false;
+			return
+		}
 		try {
 			globalStore.loading = true;
 			// throw new Error("Test error")
