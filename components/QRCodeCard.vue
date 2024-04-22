@@ -19,6 +19,13 @@
 			}
 		);
 	};
+
+	const closeQRCard = () => {
+		globalStore.showShare = false;
+		globalStore.shareLoading = false;
+		globalStore.url = "";
+		globalStore.QRvalue = "";
+	};
 </script>
 <template>
 	<v-expand-transition>
@@ -48,6 +55,14 @@
 					></v-text-field>
 				</v-col>
 			</v-row>
+			<v-btn
+			icon="mdi-close"
+			variant="plain"
+			color="grey-lighten-5"
+			class="close-btn"
+			size="small"
+			@click="closeQRCard">
+			</v-btn>
 		</v-card>
 	</v-expand-transition>
 </template>
@@ -61,9 +76,13 @@
 		aspect-ratio: 1 / 1 !important;
 		/* border: 2px solid red; */
 	}
-
 	.copy-url {
 		/* border: 2px solid blue; */
 		width: 100%;
+	}
+	.close-btn {
+		position: absolute;
+		top: 10px;
+		right: 7px;
 	}
 </style>
