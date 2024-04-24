@@ -16,6 +16,9 @@
 		globalStore.activeNotifications = globalStore.activeNotifications.filter(
 			(notification) => notification.streamer_login !== streamer_login
 		);
+		if (globalStore.activeNotifications.length === 0) {
+			globalStore.notiExpand = false;
+		}
 	};
 </script>
 <template>
