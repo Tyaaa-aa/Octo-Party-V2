@@ -9,7 +9,7 @@
 	const debugRemoveStreamer = () => {
 		console.log("Removing streamer");
 		globalStore.activeStreamers = globalStore.activeStreamers.filter(
-			(streamer) => streamer.user_name !== debugStreamer
+			(streamer) => streamer.user_login !== debugStreamer.user_login
 		);
 	};
 
