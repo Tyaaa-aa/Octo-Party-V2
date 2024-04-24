@@ -86,6 +86,65 @@ export const useGlobalStateStore = defineStore('GlobalState', {
             this.successMsg = msg
             this.isSuccess = true
         },
+        async checkStreamerStatus(streamer: string[] = []) {
+            if (this.octoData.length === 0) {
+                this.loading = false;
+                return;
+            }
+            try {
+                this.loading = true;
+                // throw new Error("Test error")
+                const response = await $fetch(`/api/twitch-streamer-status-v2`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: { streamer_list: JSON.stringify(streamer) },
+                });
+                // Check if the response is valid
+                if (!response) {
+                    console.log("No data received");
+                    this.showErrorMessage("Something went wrong with the request");
+                    return;
+                }
+    
+                // Check if the response is valid data
+                if (!("data" in response) || typeof response.data !== "object") {
+                    console.log("Invalid data format");
+                    this.showErrorMessage(
+                        "Invalid data format. Please contact the developer. (Error code: 81)"
+                    );
+                    return;
+                }
+    
+                // Check if the response is an error
+                if ("error" in response) {
+                    console.log("Invalid data format");
+                    this.showErrorMessage(
+                        "Invalid data format. Please contact the developer. (Error code: 81)"
+                    );
+                    return;
+                }
+    
+                const { offline, online } = response.data;
+    
+                let onlineNames = [];
+                for (let i = 0; i < online.length; i++) {
+                    onlineNames.push(online[i].user_name);
+                }
+    
+                this.activeStreamers = online;
+                this.inactiveStreamers = offline;
+                this.loading = false;
+            } catch (error) {
+                // Handle any unexpected errors here
+                console.error("An unexpected error occurred:", error);
+                this.showErrorMessage(
+                    "There was an issue getting streamer status, Please contact the developer. (Error code: 47)"
+                );
+                this.loading = false;
+            }
+        }
     },
     getters: {
         filterSearch (state): boolean {
