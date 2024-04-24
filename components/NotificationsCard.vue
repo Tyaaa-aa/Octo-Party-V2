@@ -9,6 +9,9 @@
 		globalStore.activeNotifications = globalStore.activeNotifications.filter(
 			(notification) => notification.streamer_login !== streamer_name
 		);
+		if (globalStore.activeNotifications.length === 0) {
+			globalStore.notiExpand = false;
+		}
 	};
 	
 	const addEmbedFromNotification = (streamer_login: string) => {
