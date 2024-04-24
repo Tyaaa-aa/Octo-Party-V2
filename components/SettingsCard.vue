@@ -35,7 +35,7 @@
 				<v-col cols="12" class="pa-5 pb-2 pt-2">
 					<v-list-item class="pa-0" v-if="ENABLE_DEBUG">
 						<v-switch
-							label="Enable Debug Mode"
+							label="Debug Menu"
 							v-model="globalStore.SHOW_DEBUG_MENU"
 							inset
 							color="deep-purple-darken-1"
