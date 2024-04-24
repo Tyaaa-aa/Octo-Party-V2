@@ -58,6 +58,7 @@ declare global {
     // Notification types
 	interface Notification {
 		streamer_name: string;
+        streamer_login: string;
 		view_count: string;
 		timestamp: Date;
 	}

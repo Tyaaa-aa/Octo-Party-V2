@@ -1,7 +1,10 @@
 <script setup>
 	const globalStore = useGlobalStateStore();
 
-	const debugStreamer = "LinusTech";
+	const debugStreamer = {
+		user_login: 'jazlatte',
+		user_name: '絕世拿鐵',
+	}
 
 	const debugRemoveStreamer = () => {
 		console.log("Removing streamer");
@@ -16,8 +19,8 @@
 		globalStore.activeStreamers = [
 			...globalStore.activeStreamers,
 			{
-				user_login: debugStreamer,
-				user_name: debugStreamer,
+				user_login: debugStreamer.user_login,
+				user_name: debugStreamer.user_name,
 				viewer_count: 888888,
 				profile_picture: "https://octo.party/logo.svg",
 			},

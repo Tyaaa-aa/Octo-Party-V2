@@ -328,6 +328,7 @@
 			console.log("New item found:", newItem);
 			const newNoti = {
 				streamer_name: newItem.user_name,
+				streamer_login: newItem.user_login,
 				view_count: newItem.viewer_count.toString(),
 				timestamp: new Date(),
 			} as Notification;
