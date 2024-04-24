@@ -7,7 +7,7 @@
 	};
 	const removeNotification = (streamer_name: string) => {
 		globalStore.activeNotifications = globalStore.activeNotifications.filter(
-			(notification) => notification.streamer_name !== streamer_name
+			(notification) => notification.streamer_login !== streamer_name
 		);
 	};
 	
@@ -75,20 +75,26 @@
 										hour12: true,
 									})
 								}}</span
-							>{{ notificationItem.streamer_name }} is live!
+							>
+							<span v-if="isNotEnglish(notificationItem.streamer_name)">
+								{{ notificationItem.streamer_name }} ({{ notificationItem.streamer_login }}) is live!
+							</span>
+							<span v-else>
+								{{ notificationItem.streamer_name }} is live!
+							</span>
 						</p>
 						<div>
 							<v-btn
 								text="Add"
 								color="deep-purple-darken-1"
 								class="ma-1"
-								@click="addEmbedFromNotification(notificationItem.streamer_name)"
+								@click="addEmbedFromNotification(notificationItem.streamer_login)"
 							></v-btn>
 							<v-btn
 								variant="plain"
 								icon="mdi-close"
 								color="grey-lighten-1"
-								@click="removeNotification(notificationItem.streamer_name)"
+								@click="removeNotification(notificationItem.streamer_login)"
 							></v-btn>
 						</div>
 					</v-list-item>
