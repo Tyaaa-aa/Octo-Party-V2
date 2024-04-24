@@ -11,10 +11,10 @@
 		);
 	};
 	
-	const addEmbedFromNotification = (streamer_name: string) => {
-		globalStore.addEmbed(streamer_name);
+	const addEmbedFromNotification = (streamer_login: string) => {
+		globalStore.addEmbed(streamer_login);
 		globalStore.activeNotifications = globalStore.activeNotifications.filter(
-			(notification) => notification.streamer_name !== streamer_name
+			(notification) => notification.streamer_login !== streamer_login
 		);
 	};
 </script>
