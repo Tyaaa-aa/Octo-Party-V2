@@ -466,6 +466,17 @@
 							"/> -->
 							<OnlineStreamersList />
 							<OfflineStreamersList />
+							<h3
+								v-if="
+									globalStore.filteredActiveStreamers.length === 0 &&
+									globalStore.filteredInactiveStreamers.length === 0 &&
+									globalStore.octoData.length > 0 &&
+									!globalStore.loading
+								"
+								style="text-align: center"
+							>
+								No Results Found
+							</h3>
 						</v-col>
 						<CreditsSection />
 					</v-row>

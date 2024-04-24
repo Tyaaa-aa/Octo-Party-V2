@@ -27,6 +27,8 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         isFullscreen: false,
         isDragging: false,
         editMode: false,
+        onlineFilterSearch: false,
+        offlineFilterSearch: false,
     }),
     actions: {
         addEmbed(newString: string) {
@@ -86,7 +88,17 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         },
     },
     getters: {
-        // ...getters if needed
+        filterSearch (state): boolean {
+            return state.onlineFilterSearch && state.offlineFilterSearch
+        },
+        filteredInactiveStreamers(state) {
+            const searchTerm = state.searchedStreamer.trim().toLowerCase()
+            return state.inactiveStreamers.filter(streamer => streamer.user_login.toLowerCase().includes(searchTerm))
+        },
+        filteredActiveStreamers(state) {
+            const searchTerm = state.searchedStreamer.trim().toLowerCase()
+            return state.activeStreamers.filter(streamer => streamer.user_login.toLowerCase().includes(searchTerm))
+        },
     }
 })
 

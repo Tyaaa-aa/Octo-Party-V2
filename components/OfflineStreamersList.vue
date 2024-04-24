@@ -13,22 +13,15 @@
 			(streamer) => streamer.user_login.toUpperCase() !== item.toUpperCase()
 		);
 	};
-	const filteredInactiveStreamers = computed(() => {
-		const searchTerm = globalStore.searchedStreamer.trim().toUpperCase();
-		return globalStore.inactiveStreamers.filter((streamer) => {
-			const userLogin = streamer.user_login.toUpperCase();
-			return userLogin.includes(searchTerm);
-		});
-	});
 </script>
 
 <template>
-	<h4 v-if="filteredInactiveStreamers.length >= 1">
-		Not Streaming ({{ filteredInactiveStreamers.length }})
+	<h4 v-if="globalStore.filteredInactiveStreamers.length >= 1">
+		Not Streaming ({{ globalStore.filteredInactiveStreamers.length }})
 	</h4>
 	<v-list>
 		<v-list-item
-			v-for="(nonActStreamer, index) in filteredInactiveStreamers"
+			v-for="(nonActStreamer, index) in globalStore.filteredInactiveStreamers"
 			:key="index"
 			class="non-streaming_row"
 		>
