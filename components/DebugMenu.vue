@@ -47,6 +47,9 @@
 						<v-list-item class="pa-0">
 							<h5 style="color: orange">Debug Menu</h5>
 						</v-list-item>
+						<v-list-item class="pa-4" @click="showError({statusCode: 418, statusMessage: 'Debug Menu Forced An Error'})">
+							Force An Error
+						</v-list-item>
 						<v-list-item class="pa-4" @click="debugAddStreamer">
 							Add Streamer
 						</v-list-item>

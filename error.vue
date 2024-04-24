@@ -61,6 +61,7 @@ useHead({
         <!-- Your content here -->
         <img src="/logo.svg" alt="Logo" class="logo bop-animation" @click="handleError">
         <h1>Error {{ error?.statusCode }} :/</h1>
+        <p>{{ error?.statusMessage }}</p>
         <div v-if="error?.statusCode === 404">
             <p><i><strong>"{{ path }}"</strong></i> doesn't exist</p>
             <p>
