@@ -3,7 +3,7 @@
 	const userSettings = useSettingStore();
 
 	const toggleMute = (event: MouseEvent) => {
-		globalStore.muted = !globalStore.muted;
+		userSettings.Muted = !userSettings.Muted;
 	};
 
   const showVolumePanel = ref(false);
@@ -14,10 +14,21 @@
   };
 
   const handleMouseLeave = () => {
-    setTimeout(()=>{
+    setTimeout(() => {
       showVolumePanel.value = false;
     }, 200)
   };
+
+  const muted = ref(false);
+  onMounted(() => {
+    if (userSettings.Muted) {
+      muted.value = true;
+    }
+  });
+
+  watch(() => userSettings.Muted, (newVal) => {
+    muted.value = newVal;
+  });
 </script>
 
 <template>
@@ -27,7 +38,7 @@
 		<v-expand-x-transition>
 			<v-card
       class="volumePanel"
-      v-if="showVolumePanel && !globalStore.muted"
+      v-if="showVolumePanel && !userSettings.Muted"
       variant="text"
       >
         <v-btn
@@ -52,7 +63,7 @@
 			</v-card>
 		</v-expand-x-transition>
 		<v-btn
-			:icon="globalStore.muted ? 'mdi-volume-off' : 'mdi-volume-high'"
+			:icon="muted ? 'mdi-volume-off' : 'mdi-volume-high'"
 			variant="plain"
 			color="grey-lighten-5"
 			class="volumeBtn"

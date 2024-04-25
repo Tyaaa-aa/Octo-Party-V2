@@ -1,58 +1,54 @@
 <script lang="ts" setup>
-	import { customAlphabet } from "nanoid";
-
-	// import  '/lib/twitch.v1.js'
-
+	const userSettings = useSettingStore();
 	const props = defineProps<{
 		creator: string;
 	}>();
 
-	const twitchEmbed = ref<string>("");
-
-	const nanoid = customAlphabet(
-		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-		5
-	);
-	const generatedUUID = nanoid();
-	const twitchEmbedID = `twitch-embed-${generatedUUID}`;
-
+	const twitchEmbedRef = ref<HTMLDivElement | null>(null);
+	let embed: any;
 	onMounted(() => {
-		// const parent = window.location.hostname;
-		// twitchEmbed.value = `https://player.twitch.tv/?channel=${props.creator}&parent=${parent}`;
-		// console.log(`EmbedTwitch mounted with creator: ${props.creator}`);
+		if (twitchEmbedRef.value && window.Twitch) {
+			embed = new window.Twitch.Embed(twitchEmbedRef.value, {
+				width: "100%",
+				height: "100%",
+				layout: "video",
+				channel: props.creator,
+				parent: window.location.hostname,
+			});
+
+			embed.addEventListener(window.Twitch.Embed.VIDEO_READY, () => {
+				const player = embed.getPlayer();
+				if (userSettings.Muted) {
+					player.setMuted(true)
+				} else {
+					player.setMuted(false)
+					player.setVolume(userSettings.Volume);
+				}
+				watch(() => userSettings.Volume, (newVal) => {
+					player.setVolume(newVal);
+				});
+				watch(() => userSettings.Muted, (newVal) => {
+					player.setMuted(newVal);
+					if (!newVal) {
+						player.setVolume(userSettings.Volume);
+					}
+				});
+			});
+		}
 	});
 
 	onUnmounted(() => {
-		// console.log("Unmounting: " + generatedUUID);
-		// console.log(`Unmounting: ${props.creator}`);
+		embed.removeEventListener(window.Twitch.Embed.VIDEO_READY, () => {
+			console.log("Removed");
+		});
 	});
-
-	// const iframeSrc = computed(() => twitchEmbed.value);
-	const iframeSrc = computed(
-		() =>
-			`https://player.twitch.tv/?channel=${props.creator}&parent=${window.location.hostname}`
-	);
 </script>
 
 <template>
-	<div class="twitch-embed">
-		<iframe
-			:src="iframeSrc"
-			:id="twitchEmbedID"
-			frameborder="0"
-			allowfullscreen="true"
-			scrolling="no"
-		></iframe>
-	</div>
+	<div ref="twitchEmbedRef"></div>
 </template>
 
 <style scoped>
-	/* .embed-twitch-item {
-  margin: 0 auto;
-  width: 50%;
-  aspect-ratio: 16 / 9;
-} */
-
 	div,
 	#twitchEmbed,
 	.twitch-embed,

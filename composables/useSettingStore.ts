@@ -12,6 +12,7 @@ export default defineStore({
       streamerList: [],
     },
     Volume: 1,
+    Muted: false,
     TheatreAudio: false,
   }),
   actions: {

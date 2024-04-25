@@ -36,6 +36,7 @@ declare global {
             streamerList: string[],
         },
         Volume: number,
+        Muted: boolean,
         TheatreAudio: boolean,
     }
 
