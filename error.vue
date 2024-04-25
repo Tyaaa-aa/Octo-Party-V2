@@ -21,8 +21,8 @@ onMounted(() => {
     pageurl.value = window.location.origin
     shareUrl.value = pageurl.value + '/share' + path
 
-    console.log(window.location.origin)
-    console.log(shareUrl.value)
+    // console.log(window.location.origin)
+    // console.log(shareUrl.value)
 })
 // CIWPIJ6y3HB
 
@@ -57,11 +57,12 @@ useHead({
 </script>
 
 <template>
-    <main class="d-flex justify-center align-center flex-column" v-auto-animate>
+    <main class="d-flex justify-center align-center flex-column pa-5" v-auto-animate>
         <!-- Your content here -->
         <img src="/logo.svg" alt="Logo" class="logo bop-animation" @click="handleError">
         <h1>Error {{ error?.statusCode }} :/</h1>
-        <p>{{ error?.statusMessage }}</p>
+        <h2>{{ error?.statusMessage }}</h2>
+        <p class="mt-5">You can help make Octo Party better by <a href="https://github.com/Tyaaa-aa/Octo-Party-V2/issues" target="_blank">reporting the issue here</a></p>
         <div v-if="error?.statusCode === 404">
             <p><i><strong>"{{ path }}"</strong></i> doesn't exist</p>
             <p>

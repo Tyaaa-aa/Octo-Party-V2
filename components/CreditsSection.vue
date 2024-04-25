@@ -10,7 +10,7 @@
 		class="d-flex align-center ma-0 mt-5"
 		style="flex-direction: column"
 	>
-		<div>
+		<div class="d-flex flex-nowrap">
 			<v-btn
 				prepend-icon="mdi-github"
 				stacked
@@ -39,6 +39,16 @@
 				target="_blank"
 			>
 				Tip
+			</v-btn>
+			<v-btn
+				prepend-icon="mdi-bug-outline"
+				stacked
+				variant="plain"
+				color="grey-darken-1"
+				href="https://github.com/Tyaaa-aa/Octo-Party-V2/issues"
+				target="_blank"
+			>
+				Bugs
 			</v-btn>
 		</div>
 		<span class="pa-2 text-center">
