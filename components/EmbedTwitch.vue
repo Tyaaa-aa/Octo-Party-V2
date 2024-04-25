@@ -35,9 +35,10 @@
 </script>
 
 <template>
-	<div :id="twitchEmbedID" class="twitch-embed">
+	<div class="twitch-embed">
 		<iframe
 			:src="iframeSrc"
+			:id="twitchEmbedID"
 			frameborder="0"
 			allowfullscreen="true"
 			scrolling="no"

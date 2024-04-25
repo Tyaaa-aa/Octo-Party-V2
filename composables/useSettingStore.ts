@@ -11,6 +11,8 @@ export default defineStore({
       },
       streamerList: [],
     },
+    Volume: 1,
+    TheatreAudio: false,
   }),
   actions: {
     // Action to update octoData with a new array of strings

@@ -29,6 +29,9 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         editMode: false,
         onlineFilterSearch: false,
         offlineFilterSearch: false,
+        muted: false,
+        volume: 1,
+        theatreAudio: false,
     }),
     actions: {
         addEmbed(newString: string) {
