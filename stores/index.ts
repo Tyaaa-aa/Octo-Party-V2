@@ -74,6 +74,17 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         toggleNoti() {
             this.notiExpand = !this.notiExpand
         },
+        toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen()
+                this.isFullscreen = true
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen()
+                    this.isFullscreen = false
+                }
+            }
+        },
         handleMainMenu() {
             if (this.listExpand) this.editMode = false
             this.listExpand = !this.listExpand
@@ -107,7 +118,7 @@ export const useGlobalStateStore = defineStore('GlobalState', {
                     this.showErrorMessage("Something went wrong with the request");
                     return;
                 }
-    
+
                 // Check if the response is valid data
                 if (!("data" in response) || typeof response.data !== "object") {
                     console.log("Invalid data format");
@@ -116,7 +127,7 @@ export const useGlobalStateStore = defineStore('GlobalState', {
                     );
                     return;
                 }
-    
+
                 // Check if the response is an error
                 if ("error" in response) {
                     console.log("Invalid data format");
@@ -125,14 +136,14 @@ export const useGlobalStateStore = defineStore('GlobalState', {
                     );
                     return;
                 }
-    
+
                 const { offline, online } = response.data;
-    
+
                 let onlineNames = [];
                 for (let i = 0; i < online.length; i++) {
                     onlineNames.push(online[i].user_name);
                 }
-    
+
                 this.activeStreamers = online;
                 this.inactiveStreamers = offline;
                 this.loading = false;
@@ -147,7 +158,7 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         }
     },
     getters: {
-        filterSearch (state): boolean {
+        filterSearch(state): boolean {
             return state.onlineFilterSearch && state.offlineFilterSearch
         },
         filteredInactiveStreamers(state) {

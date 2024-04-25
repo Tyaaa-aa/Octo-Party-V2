@@ -1,17 +1,5 @@
 <script setup lang="ts">
 	const globalStore = useGlobalStateStore();
-	
-	const toggleFullscreen = () => {
-		if (!document.fullscreenElement) {
-			document.documentElement.requestFullscreen()
-			globalStore.isFullscreen = true
-		} else {
-			if (document.exitFullscreen) {
-				document.exitFullscreen()
-				globalStore.isFullscreen = false
-			}
-		}
-	};
 
 	const toggleNoti = () => globalStore.notiExpand = !globalStore.notiExpand
 </script>
@@ -34,7 +22,7 @@
 			"
 			variant="plain"
 			color="grey-lighten-5"
-			@click="toggleFullscreen"
+			@click="globalStore.toggleFullscreen"
 		>
 		</v-btn>
 		<div>

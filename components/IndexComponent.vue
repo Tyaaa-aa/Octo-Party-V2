@@ -97,6 +97,7 @@
 			userSettings.updateRememberedList(false, "", []);
 		}
 
+		window.addEventListener('keyup', handleKeyboardShortcuts);
 	});
 
 	onUnmounted(() => {
@@ -108,6 +109,7 @@
 		if (mediaQuery.removeEventListener) {
 			mediaQuery.removeEventListener("change", updateIsMobile);
 		}
+		window.removeEventListener('keyup', handleKeyboardShortcuts);
 	});
 
 	// Remove the streamer when they go offline
@@ -158,6 +160,27 @@
 			console.log("Removing streamer: " + streamer.user_name);
 		});
 	});
+
+	const handleKeyboardShortcuts = ((event: KeyboardEvent) => {
+		// Check if the event should be handled based on the focused element
+		if (typeof document.activeElement !== 'undefined' && document.activeElement !== null) {
+			if (!isInputElement(document.activeElement)) {
+				if (event.key === 'l') { // L for list
+					globalStore.handleMainMenu()
+				}
+				if (event.key === 'f') { // F for fullscreen
+					globalStore.toggleFullscreen()
+				}
+				if (event.key === 'n') { // N for notifications
+					globalStore.toggleNoti()
+				}
+			}
+		}
+	})
+
+	const isInputElement = (element: Element) => {
+		return element.tagName === 'INPUT' || element.tagName === 'TEXTAREA';
+	};
 </script>
 
 <template>
