@@ -71,12 +71,12 @@
 
 	.toggleNotiBtn {
 		position: fixed;
-		top: 10px;
+		top: 15px;
 		right: 20px;
 	}
 	.fullscreen-btn {
 		position: fixed;
-		top: 10px;
+		top: 15px;
 		right: 70px;
 		transition: right 0.3s ease-in-out;
 	}
@@ -85,7 +85,7 @@
 	}
 	.notiCount {
 		position: fixed;
-		top: 15px;
+		top: 20px;
 		right: 40px;
 		display: flex;
 		justify-content: center;
@@ -101,7 +101,7 @@
 	}
 	.volumePanel {
 		position: fixed;
-		top: 10px;
+		top: 15px;
 		right: 120px;
 		transition: right 0.3s ease-in-out;
 	}

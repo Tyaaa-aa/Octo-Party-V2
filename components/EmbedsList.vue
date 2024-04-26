@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 	const globalStore = useGlobalStateStore();
+  const userSettings = useSettingStore();
 
 	const expandEmbed = (streamer: string) => {
 		// console.log(streamer);
@@ -226,6 +227,11 @@
 			transform: translate(-50%, -50%);
 			max-width: unset !important;
 		}
+    .expanded-embed .close-btn,
+    .expanded-embed .expand-btn,
+    .expanded-embed .drag-btn {
+      top: 50px;
+    }
 	}
   
 	@media (max-width: 1280px) {

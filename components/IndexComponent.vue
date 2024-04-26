@@ -169,6 +169,9 @@
 				if (event.key === 'n') { // N for notifications
 					globalStore.toggleNoti()
 				}
+				if (event.key === 'm') { // N for notifications
+					userSettings.Muted = !userSettings.Muted
+				}
 			}
 		}
 	})

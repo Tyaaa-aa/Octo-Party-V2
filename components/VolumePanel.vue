@@ -37,9 +37,10 @@
       @mouseleave="handleMouseLeave">
 		<v-expand-x-transition>
 			<v-card
-      class="volumePanel"
+      class="volumePanel pl-2"
       v-if="showVolumePanel && !userSettings.Muted"
-      variant="text"
+      variant="flat"
+      color="#121212"
       >
         <v-btn
         icon="mdi-theater"
@@ -47,7 +48,7 @@
         :color="userSettings.TheatreAudio ? 'deep-purple-darken-1' : 'grey-lighten-5'"
         :variant="userSettings.TheatreAudio ? 'flat' : 'plain'"
         @click="userSettings.TheatreAudio = !userSettings.TheatreAudio"
-        class="mr-2"
+        class="mr-1 ml-1"
         title="Theatre Mode Audio Enables Audio Only For Expanded Stream"
         >
 
@@ -58,7 +59,7 @@
           max="1"
           min="0"
           step=".01"
-          class="volumeSlider ml-4 mr-3"
+          class="volumeSlider pl-3 pr-3"
         ></v-slider>
 			</v-card>
 		</v-expand-x-transition>
@@ -78,16 +79,17 @@
 		display: flex;
 	}
   .volumePanel {
-    height: 50px;
-    width: 300px;
+    transform: translateY(-5px);
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     position: relative;
     overflow: visible;
+    border-radius: 10px !important;
     /* outline: 2px solid red; */
   }
   .volumeSlider {
-    max-width: 150px;
+    width: 150px;
   }
 </style>

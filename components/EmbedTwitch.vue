@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+	const globalStore = useGlobalStateStore();
 	const userSettings = useSettingStore();
 	const props = defineProps<{
 		creator: string;
@@ -18,21 +19,94 @@
 
 			embed.addEventListener(window.Twitch.Embed.VIDEO_READY, () => {
 				const player = embed.getPlayer();
-				if (userSettings.Muted) {
-					player.setMuted(true)
+				if (userSettings.Muted || globalStore.isExpand) {
+					player.setMuted(true);
 				} else {
-					player.setMuted(false)
+					player.setMuted(false);
 					player.setVolume(userSettings.Volume);
 				}
-				watch(() => userSettings.Volume, (newVal) => {
-					player.setVolume(newVal);
-				});
-				watch(() => userSettings.Muted, (newVal) => {
-					player.setMuted(newVal);
-					if (!newVal) {
-						player.setVolume(userSettings.Volume);
+				watch(
+					() => userSettings.Volume,
+					(newVal) => {
+						player.setVolume(newVal);
 					}
-				});
+				);
+				watch(
+					() => userSettings.Muted,
+					(muted) => {
+						if (muted) {
+							// Mute all when globally muted
+							player.setMuted(true);
+							return;
+						}
+
+						// Unmuting
+						if (!userSettings.TheatreAudio) {
+							player.setMuted(false);
+							return;
+						}
+
+						if (!globalStore.isExpand) {
+							player.setMuted(false);
+							return;
+						}
+
+						const isEmbedExpanded =
+							globalStore.expandedEmbed.toLowerCase() ===
+							props.creator.toLowerCase();
+
+						// Unmute only expanded stream
+						if (isEmbedExpanded) {
+							player.setMuted(false);
+						} else {
+							player.setMuted(true);
+						}
+					}
+				);
+				watch(
+					() => globalStore.expandedEmbed,
+					(newVal) => {
+						// Return early if TheatreAudio is disabled or user is muted
+						if (!userSettings.TheatreAudio || userSettings.Muted) return;
+
+						// Check if the current embed matches the expanded embed
+						const isExpandedEmbed =
+							globalStore.isExpand &&
+							props.creator.toLowerCase() === newVal.toLowerCase();
+
+						// Unmute the player if it's the expanded embed
+						if (isExpandedEmbed) {
+							player.setMuted(false);
+						}
+						// Mute the player if it's not the expanded embed
+						else {
+							player.setMuted(true);
+						}
+
+						// If no embed is expanded, set the mute state based on user settings
+						if (newVal === "") {
+							player.setMuted(userSettings.Muted);
+						}
+					}
+				);
+
+				watch(
+					() => userSettings.TheatreAudio,
+					(newVal) => {
+						if (newVal) {
+							const isEmbedExpanded =
+								globalStore.expandedEmbed.toLowerCase() ===
+								props.creator.toLowerCase();
+							if (isEmbedExpanded) {
+								player.setMuted(false);
+							} else {
+								player.setMuted(true);
+							}
+						} else {
+							player.setMuted(userSettings.Muted);
+						}
+					}
+				);
 			});
 		}
 	});
