@@ -152,12 +152,7 @@
 		if (!globalStore.ENABLE_AUTO_REMOVE_STREAM) return;
 
 		offlineStreamers.forEach((streamer) => {
-			globalStore.removeEmbed(streamer.user_name);
-			if (streamer.user_name === globalStore.expandedEmbed) {
-				globalStore.isExpand = false;
-				globalStore.expandedEmbed = "";
-			}
-			console.log("Removing streamer: " + streamer.user_name);
+			globalStore.removeEmbed(streamer.user_login);
 		});
 	});
 
@@ -173,6 +168,9 @@
 				}
 				if (event.key === 'n') { // N for notifications
 					globalStore.toggleNoti()
+				}
+				if (event.key === 'm') { // N for notifications
+					userSettings.Muted = !userSettings.Muted
 				}
 			}
 		}

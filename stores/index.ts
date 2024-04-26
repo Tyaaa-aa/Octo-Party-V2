@@ -29,6 +29,7 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         editMode: false,
         onlineFilterSearch: false,
         offlineFilterSearch: false,
+        volume: 1,
     }),
     actions: {
         addEmbed(newString: string) {
@@ -39,6 +40,10 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         },
         removeEmbed(string: string) {
             this.embedsList = this.embedsList.filter((item) => item.toUpperCase() !== string.toUpperCase());
+            if (this.embedsList.length === 0 || this.expandedEmbed.includes(string)) {
+                this.isExpand = false;
+                this.expandedEmbed = '';
+            }
         },
         setOctoData(newData: string[]) {
             this.octoData = newData;

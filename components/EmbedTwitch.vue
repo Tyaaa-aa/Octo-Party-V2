@@ -1,57 +1,128 @@
 <script lang="ts" setup>
-	import { customAlphabet } from "nanoid";
-
-	// import  '/lib/twitch.v1.js'
-
+	const globalStore = useGlobalStateStore();
+	const userSettings = useSettingStore();
 	const props = defineProps<{
 		creator: string;
 	}>();
 
-	const twitchEmbed = ref<string>("");
-
-	const nanoid = customAlphabet(
-		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-		5
-	);
-	const generatedUUID = nanoid();
-	const twitchEmbedID = `twitch-embed-${generatedUUID}`;
-
+	const twitchEmbedRef = ref<HTMLDivElement | null>(null);
+	let embed: any;
 	onMounted(() => {
-		// const parent = window.location.hostname;
-		// twitchEmbed.value = `https://player.twitch.tv/?channel=${props.creator}&parent=${parent}`;
-		// console.log(`EmbedTwitch mounted with creator: ${props.creator}`);
+		if (twitchEmbedRef.value && window.Twitch) {
+			embed = new window.Twitch.Embed(twitchEmbedRef.value, {
+				width: "100%",
+				height: "100%",
+				layout: "video",
+				channel: props.creator,
+				parent: window.location.hostname,
+			});
+
+			embed.addEventListener(window.Twitch.Embed.VIDEO_READY, () => {
+				const player = embed.getPlayer();
+				if (userSettings.Muted || globalStore.isExpand) {
+					player.setMuted(true);
+				} else {
+					player.setMuted(false);
+					player.setVolume(userSettings.Volume);
+				}
+				watch(
+					() => userSettings.Volume,
+					(newVal) => {
+						player.setVolume(newVal);
+					}
+				);
+				watch(
+					() => userSettings.Muted,
+					(muted) => {
+						if (muted) {
+							// Mute all when globally muted
+							player.setMuted(true);
+							return;
+						}
+
+						// Unmuting
+						if (!userSettings.TheatreAudio) {
+							player.setMuted(false);
+							return;
+						}
+
+						if (!globalStore.isExpand) {
+							player.setMuted(false);
+							return;
+						}
+
+						const isEmbedExpanded =
+							globalStore.expandedEmbed.toLowerCase() ===
+							props.creator.toLowerCase();
+
+						// Unmute only expanded stream
+						if (isEmbedExpanded) {
+							player.setMuted(false);
+						} else {
+							player.setMuted(true);
+						}
+					}
+				);
+				watch(
+					() => globalStore.expandedEmbed,
+					(newVal) => {
+						// Return early if TheatreAudio is disabled or user is muted
+						if (!userSettings.TheatreAudio || userSettings.Muted) return;
+
+						// Check if the current embed matches the expanded embed
+						const isExpandedEmbed =
+							globalStore.isExpand &&
+							props.creator.toLowerCase() === newVal.toLowerCase();
+
+						// Unmute the player if it's the expanded embed
+						if (isExpandedEmbed) {
+							player.setMuted(false);
+						}
+						// Mute the player if it's not the expanded embed
+						else {
+							player.setMuted(true);
+						}
+
+						// If no embed is expanded, set the mute state based on user settings
+						if (newVal === "") {
+							player.setMuted(userSettings.Muted);
+						}
+					}
+				);
+
+				watch(
+					() => userSettings.TheatreAudio,
+					(newVal) => {
+						if (newVal) {
+							const isEmbedExpanded =
+								globalStore.expandedEmbed.toLowerCase() ===
+								props.creator.toLowerCase();
+							if (isEmbedExpanded) {
+								player.setMuted(false);
+							} else {
+								player.setMuted(true);
+							}
+						} else {
+							player.setMuted(userSettings.Muted);
+						}
+					}
+				);
+			});
+		}
 	});
 
 	onUnmounted(() => {
-		// console.log("Unmounting: " + generatedUUID);
-		// console.log(`Unmounting: ${props.creator}`);
+		embed.removeEventListener(window.Twitch.Embed.VIDEO_READY, () => {
+			console.log("Removed");
+		});
 	});
-
-	// const iframeSrc = computed(() => twitchEmbed.value);
-	const iframeSrc = computed(
-		() =>
-			`https://player.twitch.tv/?channel=${props.creator}&parent=${window.location.hostname}`
-	);
 </script>
 
 <template>
-	<div :id="twitchEmbedID" class="twitch-embed">
-		<iframe
-			:src="iframeSrc"
-			frameborder="0"
-			allowfullscreen="true"
-			scrolling="no"
-		></iframe>
-	</div>
+	<div ref="twitchEmbedRef"></div>
 </template>
 
 <style scoped>
-	/* .embed-twitch-item {
-  margin: 0 auto;
-  width: 50%;
-  aspect-ratio: 16 / 9;
-} */
-
 	div,
 	#twitchEmbed,
 	.twitch-embed,

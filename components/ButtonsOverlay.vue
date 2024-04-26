@@ -13,6 +13,14 @@
 			@click="globalStore.handleMainMenu"
 		>
 		</v-btn>
+		<div
+		:class="
+				globalStore.ENABLE_NOTIFICATIONS
+					? 'volumePanel'
+					: 'volumePanel volumePanel-right'
+			">
+			<VolumePanel />
+		</div>
 		<v-btn
 			:icon="!globalStore.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'"
 			:class="
@@ -63,12 +71,12 @@
 
 	.toggleNotiBtn {
 		position: fixed;
-		top: 10px;
+		top: 15px;
 		right: 20px;
 	}
 	.fullscreen-btn {
 		position: fixed;
-		top: 10px;
+		top: 15px;
 		right: 70px;
 		transition: right 0.3s ease-in-out;
 	}
@@ -77,7 +85,7 @@
 	}
 	.notiCount {
 		position: fixed;
-		top: 15px;
+		top: 20px;
 		right: 40px;
 		display: flex;
 		justify-content: center;
@@ -90,5 +98,14 @@
 		pointer-events: none;
 		z-index: 999;
 		background-color: #ef5350;
+	}
+	.volumePanel {
+		position: fixed;
+		top: 15px;
+		right: 120px;
+		transition: right 0.3s ease-in-out;
+	}
+	.volumePanel-right {
+		right: 70px;
 	}
 </style>

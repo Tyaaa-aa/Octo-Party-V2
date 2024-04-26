@@ -13,12 +13,7 @@ export default defineNuxtConfig({
     '/': { prerender: true },
   },
   css: ['~/assets/css/main.css'],
-  app: {
-    head: {
-      script: [{ src: 'https://embed.twitch.tv/embed/v1.js' }],
-    },
-  },
-
+  plugins: ['~/plugins/twitch-embed.client.ts'],
   modules: [
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',

@@ -35,6 +35,9 @@ declare global {
             },
             streamerList: string[],
         },
+        Volume: number,
+        Muted: boolean,
+        TheatreAudio: boolean,
     }
 
     // Octo store state types (User saved data)
