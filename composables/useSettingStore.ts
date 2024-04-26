@@ -13,7 +13,7 @@ export default defineStore({
     },
     Volume: 1,
     Muted: false,
-    TheatreAudio: false,
+    TheatreAudio: true,
   }),
   actions: {
     // Action to update octoData with a new array of strings
