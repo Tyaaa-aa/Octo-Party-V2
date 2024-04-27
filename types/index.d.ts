@@ -66,6 +66,10 @@ declare global {
 		timestamp: Date;
 	}
 
+    interface Window {
+        Twitch: any;
+    }
+
     // Toggle type
 	type Toggle = NonNullable<"toggle">;
 }

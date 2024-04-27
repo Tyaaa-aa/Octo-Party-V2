@@ -8,7 +8,7 @@
 	const twitchEmbedRef = ref<HTMLDivElement | null>(null);
 	let embed: any;
 	onMounted(() => {
-		if (twitchEmbedRef.value && window.Twitch) {
+		if (twitchEmbedRef.value) {
 			embed = new window.Twitch.Embed(twitchEmbedRef.value, {
 				width: "100%",
 				height: "100%",

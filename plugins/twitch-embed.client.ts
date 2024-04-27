@@ -1,7 +1,10 @@
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
     if (process.client) {
-        const script = document.createElement('script');
-        script.src = 'https://embed.twitch.tv/embed/v1.js';
-        document.body.appendChild(script);
+        await new Promise((resolve) => {
+            const script = document.createElement('script')
+            script.src = 'https://embed.twitch.tv/embed/v1.js'
+            script.onload = resolve
+            document.body.appendChild(script)
+        })
     }
 })
