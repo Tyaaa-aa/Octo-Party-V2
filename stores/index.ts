@@ -102,6 +102,9 @@ export const useGlobalStateStore = defineStore('GlobalState', {
             this.successMsg = msg
             this.isSuccess = true
         },
+        clearAllStreams() {
+            this.embedsList = []
+        },
         async checkStreamerStatus(streamer: string[] = []) {
             if (this.octoData.length === 0) {
                 this.loading = false;

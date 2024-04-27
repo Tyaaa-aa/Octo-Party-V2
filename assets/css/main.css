@@ -73,10 +73,6 @@
 	rotate: -90deg;
 }
 
-/* .octo-ui *::-webkit-scrollbar {
-    width: 0px;
-} */
-
 html {
 	overflow: hidden;
 }

@@ -42,17 +42,6 @@
       variant="flat"
       color="#121212"
       >
-        <v-btn
-        icon="mdi-theater"
-        size="small"
-        :color="userSettings.TheatreAudio ? 'deep-purple-darken-1' : 'grey-lighten-5'"
-        :variant="userSettings.TheatreAudio ? 'flat' : 'plain'"
-        @click="userSettings.TheatreAudio = !userSettings.TheatreAudio"
-        class="mr-1 ml-1"
-        title="Theatre Mode Audio Enables Audio Only For Expanded Stream"
-        >
-
-        </v-btn>
         <v-slider
           v-model="userSettings.Volume"
           color="grey-lighten-5"

@@ -66,7 +66,7 @@
 		</v-card>
 	</v-expand-transition>
 </template>
-<style>
+<style scoped>
 	.share-card {
 		width: 400px;
 	}
