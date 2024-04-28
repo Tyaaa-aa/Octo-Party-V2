@@ -104,6 +104,8 @@ export const useGlobalStateStore = defineStore('GlobalState', {
         },
         clearAllStreams() {
             this.embedsList = []
+            this.isExpand = false
+            this.expandedEmbed = ''
         },
         async checkStreamerStatus(streamer: string[] = []) {
             if (this.octoData.length === 0) {

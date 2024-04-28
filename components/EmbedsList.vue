@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 	const globalStore = useGlobalStateStore();
-  const userSettings = useSettingStore();
+	const userSettings = useSettingStore();
 
 	const expandEmbed = (streamer: string) => {
 		// console.log(streamer);
@@ -18,11 +18,12 @@
 	<draggable
 		v-model="globalStore.embedsList"
 		item-key="id"
-		:class="
-			!globalStore.isExpand
-				? 'embeds-container'
-				: 'embeds-container embeds-container-expand'
-		"
+		:class="{
+			'embeds-container': !globalStore.isExpand,
+			'embeds-container-expand': globalStore.isExpand,
+			'embeds-container-solo': globalStore.embedsList.length === 1,
+			'embeds-less4': globalStore.embedsList.length < 4 && !globalStore.isExpand,
+		}"
 		drag-class="drag"
 		ghost-class="ghost"
 		@start="globalStore.isDragging = true"
@@ -39,6 +40,7 @@
 					'expand-solo':
 						globalStore.embedsList.length === 1 && globalStore.isExpand,
 					'embed-dragging': globalStore.isDragging,
+					'embed-solo': globalStore.embedsList.length === 1,
 				}"
 			>
 				<EmbedTwitch :creator="element" :key="element" />
@@ -84,6 +86,15 @@
 		padding-top: 40px;
 		grid-template-columns: repeat(auto-fill, minmax(33vw, 1fr));
 		gap: 10px;
+		place-items: center;
+	}
+	.embeds-less4 {
+		height: 100%;
+	}
+	.embeds-container-solo {
+		grid-template-columns: 1fr;
+		place-items: center;
+		height: 100%;
 	}
 	.embed-twitch-item {
 		margin: 0 auto;
@@ -94,6 +105,10 @@
 		position: relative;
 		transition: all 0.2s ease-in-out;
 		max-height: 46.5vh;
+	}
+	.embed-solo {
+		height: 100%;
+		width: unset;
 	}
 	.close-btn {
 		position: absolute;
@@ -168,9 +183,12 @@
 		flex-wrap: wrap;
 		justify-content: center;
 		overflow: auto;
-		padding-top: 0px;
 		/* outline: 2px solid red; */
 		max-height: 32.5%;
+		width: 100%;
+		gap: 10px;
+		padding: 10px;
+		padding-top: 0px;
 	}
 	.embeds-container-expand .embed-twitch-item {
 		min-width: 300px;
@@ -227,13 +245,13 @@
 			transform: translate(-50%, -50%);
 			max-width: unset !important;
 		}
-    .expanded-embed .close-btn,
-    .expanded-embed .expand-btn,
-    .expanded-embed .drag-btn {
-      top: 50px;
-    }
+		.expanded-embed .close-btn,
+		.expanded-embed .expand-btn,
+		.expanded-embed .drag-btn {
+			top: 50px;
+		}
 	}
-  
+
 	@media (max-width: 1280px) {
 		.embeds-container {
 			grid-template-columns: 1fr;
