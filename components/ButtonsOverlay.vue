@@ -1,7 +1,8 @@
 <script setup lang="ts">
 	const globalStore = useGlobalStateStore();
+	const userSettings = useSettingStore();
 
-	const toggleNoti = () => globalStore.notiExpand = !globalStore.notiExpand
+	const toggleNoti = () => (globalStore.notiExpand = !globalStore.notiExpand);
 </script>
 <template>
 	<div class="btns-box">
@@ -13,16 +14,34 @@
 			@click="globalStore.handleMainMenu"
 		>
 		</v-btn>
+
+		<v-btn
+			:icon="
+				userSettings.Chat ? 'mdi-message-outline' : 'mdi-message-off-outline'
+			"
+			variant="plain"
+			color="grey-lighten-5"
+			:class="
+				globalStore.ENABLE_NOTIFICATIONS
+					? 'chat-btn'
+					: 'chat-btn chat-btn-right'
+			"
+			@click="userSettings.Chat = !userSettings.Chat"
+		>
+		</v-btn>
 		<div
-		:class="
+			:class="
 				globalStore.ENABLE_NOTIFICATIONS
 					? 'volumePanel'
 					: 'volumePanel volumePanel-right'
-			">
+			"
+		>
 			<VolumePanel />
 		</div>
 		<v-btn
-			:icon="!globalStore.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'"
+			:icon="
+				!globalStore.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'
+			"
 			:class="
 				globalStore.ENABLE_NOTIFICATIONS
 					? 'fullscreen-btn'
@@ -38,7 +57,9 @@
 				<v-btn
 					:icon="!globalStore.notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
 					:variant="!globalStore.notiExpand ? 'plain' : 'elevated'"
-					:color="!globalStore.notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'"
+					:color="
+						!globalStore.notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'
+					"
 					@click="toggleNoti"
 					:class="
 						!globalStore.notiExpand
@@ -102,10 +123,20 @@
 	.volumePanel {
 		position: fixed;
 		top: 15px;
-		right: 120px;
+		right: 170px;
 		transition: right 0.3s ease-in-out;
 	}
 	.volumePanel-right {
+		right: 120px;
+	}
+
+	.chat-btn {
+		position: fixed;
+		top: 15px;
+		right: 120px;
+		transition: right 0.3s ease-in-out;
+	}
+	.chat-btn-right {
 		right: 70px;
 	}
 </style>
