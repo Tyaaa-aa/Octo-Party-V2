@@ -22,7 +22,8 @@
 			'embeds-container': !globalStore.isExpand,
 			'embeds-container-expand': globalStore.isExpand,
 			'embeds-container-solo': globalStore.embedsList.length === 1,
-			'embeds-less4': globalStore.embedsList.length < 4 && !globalStore.isExpand,
+			'embeds-less4':
+				globalStore.embedsList.length < 4 && !globalStore.isExpand,
 		}"
 		drag-class="drag"
 		ghost-class="ghost"
@@ -76,6 +77,7 @@
 			</div>
 		</template>
 	</draggable>
+	<ChatWindow />
 </template>
 
 <style scoped>

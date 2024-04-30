@@ -73,6 +73,25 @@
 	rotate: -90deg;
 }
 
+.v-window,
+.v-window__container,
+.v-window-item {
+	height: 100% !important;
+}
+
+.v-window-item {
+	opacity: 0;
+	border-radius: 10px;
+	overflow: hidden;
+	height: calc(100% - 50px) !important;
+	transition: all 1s;
+}
+.v-window-item--active {
+	display: block !important;
+	opacity: 1;
+	transition: all 1s;
+}
+
 html {
 	overflow: hidden;
 }

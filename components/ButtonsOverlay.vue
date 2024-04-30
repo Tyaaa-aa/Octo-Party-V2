@@ -3,6 +3,18 @@
 	const userSettings = useSettingStore();
 
 	const toggleNoti = () => (globalStore.notiExpand = !globalStore.notiExpand);
+
+	const chatEnabled = ref<boolean>(true);
+	onMounted(() => {
+		chatEnabled.value = userSettings.Chat;
+
+		watch(
+			() => userSettings.Chat,
+			() => {
+				chatEnabled.value = userSettings.Chat;
+			}
+		);
+	});
 </script>
 <template>
 	<div class="btns-box">
@@ -16,9 +28,7 @@
 		</v-btn>
 
 		<v-btn
-			:icon="
-				userSettings.Chat ? 'mdi-message-outline' : 'mdi-message-off-outline'
-			"
+			:icon="chatEnabled ? 'mdi-message-outline' : 'mdi-message-off-outline'"
 			variant="plain"
 			color="grey-lighten-5"
 			:class="
