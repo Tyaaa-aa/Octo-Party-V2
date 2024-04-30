@@ -5,7 +5,14 @@
 	const tab = ref(null);
 </script>
 <template>
-	<v-card class="chat">
+	<v-card 
+				class="embed-twitch-item"
+				:class="{
+					'expand-solo':
+						globalStore.embedsList.length === 1 && globalStore.isExpand,
+					'embed-dragging': globalStore.isDragging,
+					'chat-solo': globalStore.embedsList.length === 1,
+				}">
 		<v-tabs v-model="tab" color="deep-purple-lighten-1">
 			<v-tab
         align-center
@@ -32,12 +39,9 @@
 </template>
 
 <style scoped>
-	.chat {
-		position: fixed;
-		top: 5%;
-		left: 50%;
-		width: 600px;
-		height: 900px;
+	.chat-solo {
+    height: 100%;
+    width: 50% !important; 
 	}
 
   .chat-container {

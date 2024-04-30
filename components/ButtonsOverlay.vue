@@ -3,96 +3,92 @@
 	const userSettings = useSettingStore();
 
 	const toggleNoti = () => (globalStore.notiExpand = !globalStore.notiExpand);
-
-	const chatEnabled = ref<boolean>(true);
-	onMounted(() => {
-		chatEnabled.value = userSettings.Chat;
-
-		watch(
-			() => userSettings.Chat,
-			() => {
-				chatEnabled.value = userSettings.Chat;
-			}
-		);
-	});
 </script>
 <template>
-	<div class="btns-box">
-		<v-btn
-			:icon="!globalStore.listExpand ? 'mdi-menu' : 'mdi-close'"
-			:class="!globalStore.listExpand ? 'main-btn' : 'main-btn main-btn-close'"
-			variant="elevated"
-			color="deep-purple-darken-1"
-			@click="globalStore.handleMainMenu"
-		>
-		</v-btn>
+	<ClientOnly>
+		<div class="btns-box">
+			<v-btn
+				:icon="!globalStore.listExpand ? 'mdi-menu' : 'mdi-close'"
+				:class="
+					!globalStore.listExpand ? 'main-btn' : 'main-btn main-btn-close'
+				"
+				variant="elevated"
+				color="deep-purple-darken-1"
+				@click="globalStore.handleMainMenu"
+			>
+			</v-btn>
 
-		<v-btn
-			:icon="chatEnabled ? 'mdi-message-outline' : 'mdi-message-off-outline'"
-			variant="plain"
-			color="grey-lighten-5"
-			:class="
-				globalStore.ENABLE_NOTIFICATIONS
-					? 'chat-btn'
-					: 'chat-btn chat-btn-right'
-			"
-			@click="userSettings.Chat = !userSettings.Chat"
-		>
-		</v-btn>
-		<div
-			:class="
-				globalStore.ENABLE_NOTIFICATIONS
-					? 'volumePanel'
-					: 'volumePanel volumePanel-right'
-			"
-		>
-			<VolumePanel />
+			<v-btn
+				:icon="
+					userSettings.Chat ? 'mdi-message-outline' : 'mdi-message-off-outline'
+				"
+				variant="plain"
+				color="grey-lighten-5"
+				:class="
+					globalStore.ENABLE_NOTIFICATIONS
+						? 'chat-btn'
+						: 'chat-btn chat-btn-right'
+				"
+				@click="userSettings.Chat = !userSettings.Chat"
+			>
+			</v-btn>
+			<div
+				:class="
+					globalStore.ENABLE_NOTIFICATIONS
+						? 'volumePanel'
+						: 'volumePanel volumePanel-right'
+				"
+			>
+				<VolumePanel />
+			</div>
+			<v-btn
+				:icon="
+					!globalStore.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'
+				"
+				:class="
+					globalStore.ENABLE_NOTIFICATIONS
+						? 'fullscreen-btn'
+						: 'fullscreen-btn fullscreen-btn-right'
+				"
+				variant="plain"
+				color="grey-lighten-5"
+				@click="globalStore.toggleFullscreen"
+			>
+			</v-btn>
+			<div>
+				<v-expand-transition>
+					<v-btn
+						:icon="!globalStore.notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
+						:variant="!globalStore.notiExpand ? 'plain' : 'elevated'"
+						:color="
+							!globalStore.notiExpand
+								? 'grey-lighten-5'
+								: 'deep-purple-darken-1'
+						"
+						@click="toggleNoti"
+						:class="
+							!globalStore.notiExpand
+								? 'toggleNotiBtn main-btn'
+								: 'toggleNotiBtn main-btn main-btn-close'
+						"
+						v-if="globalStore.ENABLE_NOTIFICATIONS"
+					>
+					</v-btn>
+				</v-expand-transition>
+				<v-slide-y-transition>
+					<span
+						class="notiCount"
+						v-if="
+							globalStore.ENABLE_NOTIFICATIONS &&
+							!globalStore.notiExpand &&
+							globalStore.activeNotifications.length > 0
+						"
+						>{{ globalStore.activeNotifications.length }}
+					</span>
+				</v-slide-y-transition>
+			</div>
 		</div>
-		<v-btn
-			:icon="
-				!globalStore.isFullscreen ? 'mdi-fullscreen' : 'mdi-fullscreen-exit'
-			"
-			:class="
-				globalStore.ENABLE_NOTIFICATIONS
-					? 'fullscreen-btn'
-					: 'fullscreen-btn fullscreen-btn-right'
-			"
-			variant="plain"
-			color="grey-lighten-5"
-			@click="globalStore.toggleFullscreen"
-		>
-		</v-btn>
-		<div>
-			<v-expand-transition>
-				<v-btn
-					:icon="!globalStore.notiExpand ? 'mdi-bell-outline' : 'mdi-close'"
-					:variant="!globalStore.notiExpand ? 'plain' : 'elevated'"
-					:color="
-						!globalStore.notiExpand ? 'grey-lighten-5' : 'deep-purple-darken-1'
-					"
-					@click="toggleNoti"
-					:class="
-						!globalStore.notiExpand
-							? 'toggleNotiBtn main-btn'
-							: 'toggleNotiBtn main-btn main-btn-close'
-					"
-					v-if="globalStore.ENABLE_NOTIFICATIONS"
-				>
-				</v-btn>
-			</v-expand-transition>
-			<v-slide-y-transition>
-				<span
-					class="notiCount"
-					v-if="
-						globalStore.ENABLE_NOTIFICATIONS &&
-						!globalStore.notiExpand &&
-						globalStore.activeNotifications.length > 0
-					"
-					>{{ globalStore.activeNotifications.length }}
-				</span>
-			</v-slide-y-transition>
-		</div>
-	</div>
+	</ClientOnly>
 </template>
 <style scoped>
 	.btns-box {

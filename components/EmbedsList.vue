@@ -15,69 +15,77 @@
 </script>
 
 <template>
-	<draggable
-		v-model="globalStore.embedsList"
-		item-key="id"
-		:class="{
-			'embeds-container': !globalStore.isExpand,
-			'embeds-container-expand': globalStore.isExpand,
-			'embeds-container-solo': globalStore.embedsList.length === 1,
-			'embeds-less4':
-				globalStore.embedsList.length < 4 && !globalStore.isExpand,
-		}"
-		drag-class="drag"
-		ghost-class="ghost"
-		@start="globalStore.isDragging = true"
-		@end="globalStore.isDragging = false"
-		handle=".drag-btn"
-	>
-		<template #item="{ element }">
-			<div
-				class="embed-twitch-item"
-				:class="{
-					'embed-twitch-item expanded-embed':
-						element === globalStore.expandedEmbed,
-					'embed-twitch-item': !(element === globalStore.expandedEmbed),
-					'expand-solo':
-						globalStore.embedsList.length === 1 && globalStore.isExpand,
-					'embed-dragging': globalStore.isDragging,
-					'embed-solo': globalStore.embedsList.length === 1,
-				}"
-			>
-				<EmbedTwitch :creator="element" :key="element" />
-				<v-btn
-					icon="mdi-close"
-					@click="globalStore.removeEmbed(element)"
-					class="close-btn"
-					color="deep-purple-darken-1"
-				></v-btn>
-				<v-btn
-					:icon="
-						element === globalStore.expandedEmbed
-							? 'mdi-arrow-collapse'
-							: 'mdi-arrow-expand'
-					"
-					@click="expandEmbed(element)"
-					class="expand-btn"
-					color="deep-purple-darken-1"
-				></v-btn>
-				<v-btn
-					icon="mdi-drag"
-					class="drag-btn"
-					color="grey-lighten-2"
-					variant="text"
-					v-if="
-						// Show the drag button if there is more than 1 embed an embed is not expanded
-						(!globalStore.isExpand && globalStore.embedsList.length > 1) ||
-						// Show the drag button if there is more than 2 embeds an embed is expanded
-						(globalStore.isExpand && globalStore.embedsList.length > 2)
-					"
-				></v-btn>
-				<span class="embed-drag-box">{{ element }}</span>
-			</div>
-		</template>
-	</draggable>
-	<ChatWindow />
+	<ClientOnly>
+		<draggable
+			v-model="globalStore.embedsList"
+			item-key="id"
+			:class="{
+				'embeds-container': !globalStore.isExpand,
+				'embeds-container-expand': globalStore.isExpand,
+				'embeds-container-solo': globalStore.embedsList.length === 1,
+				'embeds-container-solo-chat':
+					globalStore.embedsList.length === 1 && userSettings.Chat,
+				'embeds-less4':
+					globalStore.embedsList.length < 4 && !globalStore.isExpand,
+			}"
+			drag-class="drag"
+			ghost-class="ghost"
+			@start="globalStore.isDragging = true"
+			@end="globalStore.isDragging = false"
+			handle=".drag-btn"
+		>
+			<template #item="{ element }">
+				<div
+					class="embed-twitch-item"
+					:class="{
+						'embed-twitch-item expanded-embed':
+							element === globalStore.expandedEmbed,
+						'embed-twitch-item': !(element === globalStore.expandedEmbed),
+						'expand-solo':
+							globalStore.embedsList.length === 1 && globalStore.isExpand,
+						'embed-dragging': globalStore.isDragging,
+						'embed-solo': globalStore.embedsList.length === 1,
+					}"
+				>
+					<EmbedTwitch :creator="element" :key="element" />
+					<v-btn
+						icon="mdi-close"
+						@click="globalStore.removeEmbed(element)"
+						class="close-btn"
+						color="deep-purple-darken-1"
+					></v-btn>
+					<v-btn
+						:icon="
+							element === globalStore.expandedEmbed
+								? 'mdi-arrow-collapse'
+								: 'mdi-arrow-expand'
+						"
+						@click="expandEmbed(element)"
+						class="expand-btn"
+						color="deep-purple-darken-1"
+					></v-btn>
+					<v-btn
+						icon="mdi-drag"
+						class="drag-btn"
+						color="grey-lighten-2"
+						variant="text"
+						v-if="
+							// Show the drag button if there is more than 1 embed an embed is not expanded
+							(!globalStore.isExpand && globalStore.embedsList.length > 1) ||
+							// Show the drag button if there is more than 2 embeds an embed is expanded
+							(globalStore.isExpand && globalStore.embedsList.length > 2)
+						"
+					></v-btn>
+					<span class="embed-drag-box">{{ element }}</span>
+				</div>
+			</template>
+		</draggable>
+		<Teleport to=".embeds-container">
+			<ChatWindow
+				v-if="userSettings.Chat && globalStore.embedsList.length > 0"
+			/>
+		</Teleport>
+	</ClientOnly>
 </template>
 
 <style scoped>
@@ -220,7 +228,13 @@
 		transform: translate(-50%, -50%);
 		max-width: unset !important;
 	}
-
+	.embeds-container-solo-chat .expand-solo {
+		width: 70% !important;
+	}
+	.embeds-container-solo-chat {
+		display: flex;
+		flex-direction: row-reverse;
+	}
 	@media (max-width: 1574px) {
 		.expanded-embed {
 			max-height: 50% !important;
