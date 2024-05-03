@@ -1,5 +1,6 @@
 <script setup>
 	const globalStore = useGlobalStateStore();
+	const userSettings = useSettingStore();
 
 	const debugStreamer = {
 		user_login: 'jazlatte',
@@ -46,6 +47,15 @@
 					<v-col cols="12" class="pa-5 pb-2 pt-2">
 						<v-list-item class="pa-0">
 							<h5 style="color: orange">Debug Menu</h5>
+						</v-list-item>
+						<v-list-item class="pa-4" @click="userSettings.ChatLocation = 'right'">
+							Chat (RIGHT)
+						</v-list-item>
+						<v-list-item class="pa-4" @click="userSettings.ChatLocation = 'left'">
+							Chat (LEFT)
+						</v-list-item>
+						<v-list-item class="pa-4 text-center">
+							CHAT STATE: <br>{{ userSettings.ChatLocation }}
 						</v-list-item>
 						<v-list-item class="pa-4" @click="showError({statusCode: 418, statusMessage: 'Debug Menu Forced An Error'})">
 							Force An Error

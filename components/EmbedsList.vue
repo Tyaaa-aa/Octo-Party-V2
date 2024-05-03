@@ -12,21 +12,34 @@
 		globalStore.isExpand = true;
 		globalStore.expandedEmbed = streamer;
 	};
+
+	const mountTP = ref(false);
+	onMounted(() => {
+		mountTP.value = true;
+	});
 </script>
 
 <template>
 	<ClientOnly>
+		<div 
+		class="expand-embed"
+		:class="{
+			'expand-solo': globalStore.embedsList.length === 1 && globalStore.isExpand
+		}"
+		:style="globalStore.isExpand ? 'display: flex;' : 'display: none;'"
+		></div>
 		<draggable
 			v-model="globalStore.embedsList"
 			item-key="id"
 			:class="{
 				'embeds-container': !globalStore.isExpand,
-				'embeds-container-expand': globalStore.isExpand,
 				'embeds-container-solo': globalStore.embedsList.length === 1,
 				'embeds-container-solo-chat':
 					globalStore.embedsList.length === 1 && userSettings.Chat,
 				'embeds-less4':
 					globalStore.embedsList.length < 4 && !globalStore.isExpand,
+				'embeds-container-left': userSettings.ChatLocation === 'left',
+				'embeds-container-right': userSettings.ChatLocation === 'right',
 			}"
 			drag-class="drag"
 			ghost-class="ghost"
@@ -35,49 +48,52 @@
 			handle=".drag-btn"
 		>
 			<template #item="{ element }">
-				<div
-					class="embed-twitch-item"
-					:class="{
-						'embed-twitch-item expanded-embed':
-							element === globalStore.expandedEmbed,
-						'embed-twitch-item': !(element === globalStore.expandedEmbed),
-						'expand-solo':
-							globalStore.embedsList.length === 1 && globalStore.isExpand,
-						'embed-dragging': globalStore.isDragging,
-						'embed-solo': globalStore.embedsList.length === 1,
-					}"
+				<Teleport
+					to=".expand-embed"
+					:disabled="
+						!globalStore.isExpand || !globalStore.expandedEmbed === element
+					"
 				>
-					<EmbedTwitch :creator="element" :key="element" />
-					<v-btn
-						icon="mdi-close"
-						@click="globalStore.removeEmbed(element)"
-						class="close-btn"
-						color="deep-purple-darken-1"
-					></v-btn>
-					<v-btn
-						:icon="
-							element === globalStore.expandedEmbed
-								? 'mdi-arrow-collapse'
-								: 'mdi-arrow-expand'
-						"
-						@click="expandEmbed(element)"
-						class="expand-btn"
-						color="deep-purple-darken-1"
-					></v-btn>
-					<v-btn
-						icon="mdi-drag"
-						class="drag-btn"
-						color="grey-lighten-2"
-						variant="text"
-						v-if="
-							// Show the drag button if there is more than 1 embed an embed is not expanded
-							(!globalStore.isExpand && globalStore.embedsList.length > 1) ||
-							// Show the drag button if there is more than 2 embeds an embed is expanded
-							(globalStore.isExpand && globalStore.embedsList.length > 2)
-						"
-					></v-btn>
-					<span class="embed-drag-box">{{ element }}</span>
-				</div>
+					<div
+						class="embed-twitch-item"
+						:class="{
+							'embed-twitch-item': !(element === globalStore.expandedEmbed),
+							'embed-dragging': globalStore.isDragging,
+							'embed-solo': globalStore.embedsList.length === 1,
+						}"
+					>
+						<EmbedTwitch :creator="element" :key="element" />
+						<v-btn
+							icon="mdi-close"
+							@click="globalStore.removeEmbed(element)"
+							class="close-btn"
+							color="deep-purple-darken-1"
+						></v-btn>
+						<v-btn
+							:icon="
+								element === globalStore.expandedEmbed
+									? 'mdi-arrow-collapse'
+									: 'mdi-arrow-expand'
+							"
+							@click="expandEmbed(element)"
+							class="expand-btn"
+							color="deep-purple-darken-1"
+						></v-btn>
+						<v-btn
+							icon="mdi-drag"
+							class="drag-btn"
+							color="grey-lighten-2"
+							variant="text"
+							v-if="
+								// Show the drag button if there is more than 1 embed an embed is not expanded
+								(!globalStore.isExpand && globalStore.embedsList.length > 1) ||
+								// Show the drag button if there is more than 2 embeds an embed is expanded
+								(globalStore.isExpand && globalStore.embedsList.length > 2)
+							"
+						></v-btn>
+						<span class="embed-drag-box">{{ element }}</span>
+					</div>
+				</Teleport>
 			</template>
 		</draggable>
 		<Teleport to=".embeds-container">
@@ -115,10 +131,6 @@
 		position: relative;
 		transition: all 0.2s ease-in-out;
 		max-height: 46.5vh;
-	}
-	.embed-solo {
-		height: 100%;
-		width: unset;
 	}
 	.close-btn {
 		position: absolute;
@@ -220,13 +232,23 @@
 		z-index: 1;
 		/* border: 2px solid red; */
 	}
-	.expand-solo {
-		height: 85vh !important;
-		max-height: 85vh !important;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		max-width: 96vw !important;
+	.expand-embed {
+		min-height: 55dvh;
+		max-height: 80dvh;
+		resize: vertical;
+		border: 2px solid red;
 	}
+	.expand-embed .embed-twitch-item {
+		max-height: none;
+	}
+	.expand-solo {
+		width: 100%;
+		height: 100vh;
+		display: flex;
+		place-items: center;
+	}
+
+
 	.embeds-container-solo-chat .expand-solo {
 		width: 69% !important;
 		max-height: 85vh !important;
@@ -236,7 +258,7 @@
 	}
 	.embeds-container-solo-chat {
 		display: flex;
-		flex-direction: row-reverse;
+		/* flex-direction: row-reverse; */
 		justify-content: center;
 	}
 	.embeds-container-solo-chat > div {

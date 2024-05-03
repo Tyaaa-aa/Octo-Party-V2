@@ -3,11 +3,11 @@
 	const userSettings = useSettingStore();
 
 	const tab = ref(null);
-  const url = ref<string>('')
+	const url = ref<string>("");
 
-  onMounted(()=>{
-    url.value = window.location.hostname
-  })
+	onMounted(() => {
+		url.value = window.location.hostname;
+	});
 </script>
 <template>
 	<v-card
@@ -21,9 +21,26 @@
 				globalStore.isExpand && globalStore.embedsList.length === 1,
 		}"
 	>
-		<v-btn icon color="deep-purple-darken-1" variant="tonal">
-			<v-icon>mdi-chevron-left</v-icon>
-		</v-btn>
+		<div class="w-100 d-flex justify-center pt-1">
+			<v-btn
+				icon
+				color="deep-purple-darken-1"
+				:variant="userSettings.ChatLocation === 'left' ? 'flat' : 'plain'"
+				@click="userSettings.ChatLocation = 'left'"
+				class="ma-1"
+			>
+				<v-icon>mdi-chevron-left</v-icon>
+			</v-btn>
+			<v-btn
+				icon
+				color="deep-purple-darken-1"
+				:variant="userSettings.ChatLocation === 'right' ? 'flat' : 'plain'"
+				@click="userSettings.ChatLocation = 'right'"
+				class="ma-1"
+			>
+				<v-icon>mdi-chevron-right</v-icon>
+			</v-btn>
+		</div>
 
 		<v-tabs v-model="tab" color="deep-purple-lighten-1">
 			<v-tab
@@ -31,6 +48,7 @@
 				v-for="streamer in globalStore.embedsList"
 				:key="streamer"
 				:value="streamer"
+				class="font-weight-bold"
 			>
 				{{ streamer }}
 			</v-tab>
@@ -47,7 +65,8 @@
 						:src="
 							'https://www.twitch.tv/embed/' +
 							streamer +
-							'/chat?darkpopout&parent=' + url
+							'/chat?darkpopout&parent=' +
+							url
 						"
 						frameborder="0"
 						width="100%"
@@ -66,10 +85,10 @@
 	}
 
 	.chat-container {
-		height: 92%;
+		height: 90%;
 		padding: 10px;
 	}
 	.embeds-container-solo-chat .expand-solo .chat-container {
-		height: 94.5%;
+		height: 93%;
 	}
 </style>

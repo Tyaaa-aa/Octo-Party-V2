@@ -15,6 +15,7 @@ export default defineStore({
     Muted: false,
     TheatreAudio: true,
     Chat: true,
+    ChatLocation: 'right',
   }),
   actions: {
     // Action to update octoData with a new array of strings

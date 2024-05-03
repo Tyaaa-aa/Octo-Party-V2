@@ -39,6 +39,7 @@ declare global {
         Muted: boolean,
         TheatreAudio: boolean,
         Chat: boolean,
+        ChatLocation: string,
     }
 
     // Octo store state types (User saved data)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	const globalStore = useGlobalStateStore();
 	const userSettings = useSettingStore();
-	const ENABLE_DEBUG = ref<boolean>(false);
+	const ENABLE_DEBUG = ref<boolean>(true);
 
 	watch(
 		() => globalStore.ENABLE_NOTIFICATIONS,
